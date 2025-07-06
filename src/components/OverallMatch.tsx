@@ -7,6 +7,10 @@ interface OverallMatchProps {
   data: {
     title: string;
     round: string;
+    homeTeam: string;
+    awayTeam: string;
+    homeScore: number;
+    awayScore: number;
     court1Status: string;
     court2Status: string;
   };
@@ -24,10 +28,21 @@ const OverallMatch: React.FC<OverallMatchProps> = ({ data }) => {
         </div>
       </div>
 
-      {/* Center Section - Live Indicator */}
-      <div className="flex items-center space-x-2">
-        <div className="h-3 w-3 bg-red-500 rounded-full animate-pulse"></div>
-        <span className="text-red-400 font-semibold text-lg">LIVE</span>
+      {/* Center Section - Overall Team Score */}
+      <div className="flex items-center space-x-8">
+        <div className="text-center">
+          <div className="text-lg text-blue-300 mb-2">{data.homeTeam}</div>
+          <div className="text-6xl font-bold text-white">{data.homeScore}</div>
+        </div>
+        <div className="flex flex-col items-center">
+          <div className="h-3 w-3 bg-red-500 rounded-full animate-pulse mb-2"></div>
+          <span className="text-red-400 font-semibold text-lg">LIVE</span>
+          <div className="text-blue-300 text-sm mt-2">Overall Score</div>
+        </div>
+        <div className="text-center">
+          <div className="text-lg text-blue-300 mb-2">{data.awayTeam}</div>
+          <div className="text-6xl font-bold text-white">{data.awayScore}</div>
+        </div>
       </div>
 
       {/* Right Section - Court Status */}
