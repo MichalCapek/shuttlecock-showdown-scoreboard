@@ -13,6 +13,7 @@ interface CourtData {
   awayTeam: TeamData;
   currentSet: number;
   server: 'home' | 'away';
+  pastSets?: string[]; // e.g., ["21-19", "18-21"]
 }
 
 interface CourtDisplayProps {
@@ -26,13 +27,19 @@ const CourtDisplay: React.FC<CourtDisplayProps> = ({ courtNumber, data }) => {
       {/* Court Header */}
       <div className="text-center mb-8">
         <h2 className="text-4xl font-bold text-blue-300 mb-4">COURT {courtNumber}</h2>
-        <Badge variant="outline" className="text-xl px-6 py-3 border-blue-400 text-blue-300">
+        <Badge variant="outline" className="text-xl px-6 py-3 border-blue-400 text-blue-300 mb-4">
           Set {data.currentSet}
         </Badge>
+        {/* Past Sets Scores */}
+        {data.pastSets && data.pastSets.length > 0 && (
+          <div className="text-blue-300 text-lg">
+            Past sets: {data.pastSets.join(', ')}
+          </div>
+        )}
       </div>
 
       {/* Teams Display - Side by Side */}
-      <div className="flex-1 flex items-center justify-center space-x-16">
+      <div className="flex-1 flex items-center justify-center space-x-8">
         {/* Home Team */}
         <div className={`p-8 rounded-2xl transition-all duration-300 ${
           data.server === 'home' 
@@ -42,18 +49,15 @@ const CourtDisplay: React.FC<CourtDisplayProps> = ({ courtNumber, data }) => {
           <div className="text-center">
             <h3 className="text-4xl font-bold text-white mb-4">{data.homeTeam.shortName}</h3>
             <div className="text-7xl font-bold text-white mb-4">{data.homeTeam.score}</div>
-            <div className="flex items-center justify-center space-x-4">
-              <span className="text-lg text-blue-300">Sets: {data.homeTeam.sets}</span>
-              {data.server === 'home' && (
-                <Badge className="bg-green-500 text-white text-sm">SERVING</Badge>
-              )}
-            </div>
+            {data.server === 'home' && (
+              <Badge className="bg-green-500 text-white text-sm">SERVING</Badge>
+            )}
           </div>
         </div>
 
         {/* VS Divider */}
         <div className="text-center">
-          <span className="text-4xl font-bold text-blue-300">VS</span>
+          <span className="text-lg font-bold text-blue-300">vs</span>
         </div>
 
         {/* Away Team */}
@@ -65,12 +69,9 @@ const CourtDisplay: React.FC<CourtDisplayProps> = ({ courtNumber, data }) => {
           <div className="text-center">
             <h3 className="text-4xl font-bold text-white mb-4">{data.awayTeam.shortName}</h3>
             <div className="text-7xl font-bold text-white mb-4">{data.awayTeam.score}</div>
-            <div className="flex items-center justify-center space-x-4">
-              <span className="text-lg text-blue-300">Sets: {data.awayTeam.sets}</span>
-              {data.server === 'away' && (
-                <Badge className="bg-green-500 text-white text-sm">SERVING</Badge>
-              )}
-            </div>
+            {data.server === 'away' && (
+              <Badge className="bg-green-500 text-white text-sm">SERVING</Badge>
+            )}
           </div>
         </div>
       </div>
