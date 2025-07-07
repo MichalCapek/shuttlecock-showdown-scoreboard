@@ -45,12 +45,12 @@ const Index = () => {
   return (
     <div className="w-full h-screen text-white overflow-hidden flex flex-col" style={{ aspectRatio: '16/9', background: 'linear-gradient(135deg, #004A90 0%, #E3161B 100%)' }}>
       {/* Header with Tournament Info Only */}
-      <div className="h-10 flex items-center justify-center border-b-2 border-white/40" style={{ backgroundColor: 'rgba(0, 74, 144, 0.95)' }}>
+      <div className="h-16 flex items-center justify-center border-b-4 border-white/60" style={{ backgroundColor: 'rgba(0, 74, 144, 0.95)' }}>
         <OverallMatch data={overallMatch} />
       </div>
 
       {/* Overall Score Section */}
-      <div className="border-b-4 border-white/60 shadow-2xl" style={{ backgroundColor: 'rgba(227, 22, 27, 0.95)' }}>
+      <div className="border-b-4 border-white/80 shadow-2xl" style={{ backgroundColor: 'rgba(227, 22, 27, 0.95)' }}>
         <OverallScore 
           homeTeam={overallMatch.homeTeam}
           awayTeam={overallMatch.awayTeam}
@@ -62,7 +62,7 @@ const Index = () => {
       {/* Main Courts Area */}
       <div className="flex-1 flex">
         {/* Court 1 */}
-        <div className="flex-1 p-3 border-r-2 border-white/40">
+        <div className="flex-1 px-6 border-r-4 border-white/60">
           <CourtDisplay 
             courtNumber={1} 
             data={court1Data}
@@ -70,7 +70,7 @@ const Index = () => {
         </div>
 
         {/* Court 2 */}
-        <div className="flex-1 p-3">
+        <div className="flex-1 px-6">
           <CourtDisplay 
             courtNumber={2} 
             data={court2Data}
@@ -79,7 +79,7 @@ const Index = () => {
       </div>
 
       {/* Sponsor Area */}
-      <div className="h-12 border-t-2 border-white/40" style={{ backgroundColor: 'rgba(0, 74, 144, 0.95)' }}>
+      <div className="h-16 border-t-4 border-white/60" style={{ backgroundColor: 'rgba(0, 74, 144, 0.95)' }}>
         <SponsorArea />
       </div>
     </div>
