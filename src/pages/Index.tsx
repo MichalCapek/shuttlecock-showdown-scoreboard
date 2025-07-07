@@ -43,14 +43,14 @@ const Index = () => {
   });
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 text-white overflow-hidden flex flex-col">
+    <div className="w-full h-screen bg-gradient-to-br from-green-900 via-green-800 to-green-700 text-white overflow-hidden flex flex-col" style={{ aspectRatio: '16/9' }}>
       {/* Header with Tournament Info Only */}
-      <div className="h-24 flex items-center justify-center border-b border-blue-600/30 bg-gradient-to-r from-blue-800/20 to-blue-600/20">
+      <div className="h-16 flex items-center justify-center border-b-2 border-green-500 bg-gradient-to-r from-green-800/40 to-green-600/40">
         <OverallMatch data={overallMatch} />
       </div>
 
       {/* Overall Score Section */}
-      <div className="border-b border-blue-600/30 bg-gradient-to-r from-slate-800/30 to-blue-800/20">
+      <div className="border-b-4 border-green-500 bg-gradient-to-r from-green-800/30 to-green-700/30 shadow-lg">
         <OverallScore 
           homeTeam={overallMatch.homeTeam}
           awayTeam={overallMatch.awayTeam}
@@ -62,7 +62,7 @@ const Index = () => {
       {/* Main Courts Area */}
       <div className="flex-1 flex">
         {/* Court 1 */}
-        <div className="flex-1 p-6 border-r border-blue-600/30">
+        <div className="flex-1 p-4 border-r-2 border-green-500">
           <CourtDisplay 
             courtNumber={1} 
             data={court1Data}
@@ -70,7 +70,7 @@ const Index = () => {
         </div>
 
         {/* Court 2 */}
-        <div className="flex-1 p-6">
+        <div className="flex-1 p-4">
           <CourtDisplay 
             courtNumber={2} 
             data={court2Data}
@@ -79,7 +79,7 @@ const Index = () => {
       </div>
 
       {/* Sponsor Area */}
-      <div className="h-20 border-t border-blue-600/30 bg-gradient-to-r from-slate-800/50 to-blue-800/30">
+      <div className="h-16 border-t-2 border-green-500 bg-gradient-to-r from-green-800/50 to-green-700/40">
         <SponsorArea />
       </div>
     </div>
