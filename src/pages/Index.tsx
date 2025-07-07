@@ -43,14 +43,14 @@ const Index = () => {
   });
 
   return (
-    <div className="w-full h-screen bg-gradient-to-br from-green-900 via-green-800 to-green-700 text-white overflow-hidden flex flex-col" style={{ aspectRatio: '16/9' }}>
+    <div className="w-full h-screen text-white overflow-hidden flex flex-col" style={{ aspectRatio: '16/9', background: 'linear-gradient(135deg, #004A90 0%, #E3161B 100%)' }}>
       {/* Header with Tournament Info Only */}
-      <div className="h-16 flex items-center justify-center border-b-2 border-green-500 bg-gradient-to-r from-green-800/40 to-green-600/40">
+      <div className="h-12 flex items-center justify-center border-b-2 border-white/30" style={{ backgroundColor: 'rgba(0, 74, 144, 0.8)' }}>
         <OverallMatch data={overallMatch} />
       </div>
 
       {/* Overall Score Section */}
-      <div className="border-b-4 border-green-500 bg-gradient-to-r from-green-800/30 to-green-700/30 shadow-lg">
+      <div className="border-b-4 border-white shadow-lg" style={{ backgroundColor: 'rgba(227, 22, 27, 0.9)' }}>
         <OverallScore 
           homeTeam={overallMatch.homeTeam}
           awayTeam={overallMatch.awayTeam}
@@ -62,7 +62,7 @@ const Index = () => {
       {/* Main Courts Area */}
       <div className="flex-1 flex">
         {/* Court 1 */}
-        <div className="flex-1 p-4 border-r-2 border-green-500">
+        <div className="flex-1 p-4 border-r-2 border-white/30">
           <CourtDisplay 
             courtNumber={1} 
             data={court1Data}
@@ -79,7 +79,7 @@ const Index = () => {
       </div>
 
       {/* Sponsor Area */}
-      <div className="h-16 border-t-2 border-green-500 bg-gradient-to-r from-green-800/50 to-green-700/40">
+      <div className="h-16 border-t-2 border-white/30" style={{ backgroundColor: 'rgba(0, 74, 144, 0.8)' }}>
         <SponsorArea />
       </div>
     </div>

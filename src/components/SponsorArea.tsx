@@ -6,10 +6,10 @@ const SponsorArea: React.FC = () => {
   
   // Sample sponsor data - replace with actual sponsor logos
   const sponsors = [
-    { name: "Yonex", color: "from-red-600 to-red-800" },
-    { name: "Victor", color: "from-blue-600 to-blue-800" },
-    { name: "Li-Ning", color: "from-yellow-600 to-yellow-800" },
-    { name: "BWF", color: "from-green-600 to-green-800" },
+    { name: "Yonex", color: "#E3161B" },
+    { name: "Victor", color: "#004A90" },
+    { name: "Li-Ning", color: "#E3161B" },
+    { name: "BWF", color: "#004A90" },
   ];
 
   useEffect(() => {
@@ -27,7 +27,7 @@ const SponsorArea: React.FC = () => {
       
       {/* Sponsor Content */}
       <div className="flex items-center space-x-8 z-10">
-        <span className="text-blue-300 font-medium">Official Partners:</span>
+        <span className="text-white font-medium">Official Partners:</span>
         
         <div className="flex items-center space-x-6">
           {sponsors.map((sponsor, index) => (
@@ -39,21 +39,21 @@ const SponsorArea: React.FC = () => {
                   : 'opacity-40 scale-100'
               }`}
             >
-              <div className={`px-6 py-2 rounded-lg bg-gradient-to-r ${sponsor.color} shadow-lg`}>
+              <div className="px-6 py-2 rounded-lg shadow-lg" style={{ backgroundColor: sponsor.color }}>
                 <span className="text-white font-bold text-lg">{sponsor.name}</span>
               </div>
             </div>
           ))}
         </div>
 
-        <div className="text-sm text-blue-300/70">
+        <div className="text-sm text-white/70">
           Powered by Badminton Championship
         </div>
       </div>
 
       {/* Decorative Elements */}
-      <div className="absolute left-0 top-0 h-full w-2 bg-gradient-to-b from-blue-500 to-transparent"></div>
-      <div className="absolute right-0 top-0 h-full w-2 bg-gradient-to-b from-blue-500 to-transparent"></div>
+      <div className="absolute left-0 top-0 h-full w-2" style={{ background: 'linear-gradient(to bottom, #E3161B, transparent)' }}></div>
+      <div className="absolute right-0 top-0 h-full w-2" style={{ background: 'linear-gradient(to bottom, #E3161B, transparent)' }}></div>
     </div>
   );
 };
