@@ -43,52 +43,44 @@ const Index = () => {
   });
 
   return (
-    <div className="w-full min-h-screen flex items-center justify-center bg-gray-900 p-4">
-      <div 
-        className="w-full text-white overflow-hidden flex flex-col shadow-2xl" 
-        style={{ 
-          aspectRatio: '16/9',
-          background: 'linear-gradient(135deg, #004A90 0%, #E3161B 100%)'
-        }}
-      >
-        {/* Header with Tournament Info Only */}
-        <div className="flex items-center justify-center border-b-4 border-white/60 py-4" style={{ backgroundColor: 'rgba(0, 74, 144, 0.95)' }}>
-          <OverallMatch data={overallMatch} />
-        </div>
+    <div className="w-full h-screen text-white overflow-hidden flex flex-col" style={{ aspectRatio: '16/9', background: 'linear-gradient(135deg, #004A90 0%, #E3161B 100%)' }}>
+      {/* Header with Tournament Info Only */}
+      <div className="h-16 flex items-center justify-center border-b-4 border-white/60" style={{ backgroundColor: 'rgba(0, 74, 144, 0.95)' }}>
+        <OverallMatch data={overallMatch} />
+      </div>
 
-        {/* Overall Score Section */}
-        <div className="border-b-4 border-white/80 shadow-2xl py-8" style={{ backgroundColor: 'rgba(227, 22, 27, 0.95)' }}>
-          <OverallScore 
-            homeTeam={overallMatch.homeTeam}
-            awayTeam={overallMatch.awayTeam}
-            homeScore={overallMatch.homeScore}
-            awayScore={overallMatch.awayScore}
+      {/* Overall Score Section */}
+      <div className="border-b-4 border-white/80 shadow-2xl" style={{ backgroundColor: 'rgba(227, 22, 27, 0.95)' }}>
+        <OverallScore 
+          homeTeam={overallMatch.homeTeam}
+          awayTeam={overallMatch.awayTeam}
+          homeScore={overallMatch.homeScore}
+          awayScore={overallMatch.awayScore}
+        />
+      </div>
+
+      {/* Main Courts Area */}
+      <div className="flex-1 flex">
+        {/* Court 1 */}
+        <div className="flex-1 px-6 border-r-4 border-white/60">
+          <CourtDisplay 
+            courtNumber={1} 
+            data={court1Data}
           />
         </div>
 
-        {/* Main Courts Area */}
-        <div className="flex-1 flex">
-          {/* Court 1 */}
-          <div className="flex-1 px-6 border-r-4 border-white/60">
-            <CourtDisplay 
-              courtNumber={1} 
-              data={court1Data}
-            />
-          </div>
-
-          {/* Court 2 */}
-          <div className="flex-1 px-6">
-            <CourtDisplay 
-              courtNumber={2} 
-              data={court2Data}
-            />
-          </div>
+        {/* Court 2 */}
+        <div className="flex-1 px-6">
+          <CourtDisplay 
+            courtNumber={2} 
+            data={court2Data}
+          />
         </div>
+      </div>
 
-        {/* Sponsor Area */}
-        <div className="border-t-4 border-white/60 py-3" style={{ backgroundColor: 'rgba(0, 74, 144, 0.95)' }}>
-          <SponsorArea />
-        </div>
+      {/* Sponsor Area */}
+      <div className="h-16 border-t-4 border-white/60" style={{ backgroundColor: 'rgba(0, 74, 144, 0.95)' }}>
+        <SponsorArea />
       </div>
     </div>
   );
