@@ -1,89 +1,116 @@
-
-import React, { useState } from 'react';
-import CourtDisplay from '../components/CourtDisplay';
-import OverallMatch from '../components/OverallMatch';
-import OverallScore from '../components/OverallScore';
-import SponsorArea from '../components/SponsorArea';
-
-interface CourtData {
-  homeTeam: { shortName: string; score: number; sets: number };
-  awayTeam: { shortName: string; score: number; sets: number };
-  currentSet: number;
-  server: 'home' | 'away';
-  pastSets?: string[];
-}
+import React from "react";
+import CourtDisplay from "../components/CourtDisplay";
+import OverallMatch from "../components/OverallMatch";
+import OverallScore from "../components/OverallScore";
+import SponsorArea from "../components/SponsorArea";
+import { useCourtScore } from "../hooks/useCourtScore";
+import { useMatchInfo } from "../hooks/useMatchInfo";
 
 const Index = () => {
-  // Sample data for demonstration
-  const [court1Data, setCourt1Data] = useState<CourtData>({
-    homeTeam: { shortName: "HOME", score: 15, sets: 1 },
-    awayTeam: { shortName: "AWAY", score: 12, sets: 0 },
-    currentSet: 2,
-    server: "home",
-    pastSets: ["21-19"]
-  });
+    const court1 = useCourtScore("court1");
+    const court2 = useCourtScore("court2");
+    const { matchInfo, loading } = useMatchInfo();
 
-  const [court2Data, setCourt2Data] = useState<CourtData>({
-    homeTeam: { shortName: "HOME", score: 8, sets: 0 },
-    awayTeam: { shortName: "AWAY", score: 11, sets: 1 },
-    currentSet: 2,
-    server: "away",
-    pastSets: ["18-21"]
-  });
+    if (
+        loading ||
+        !matchInfo?.teamAName ||
+        !matchInfo?.teamBName ||
+        court1.loading ||
+        court2.loading
+    ) {
+        return (
+            <div className="min-h-screen bg-background text-foreground flex items-center justify-center text-2xl">
+                Načítám data...
+            </div>
+        );
+    }
 
-  const [overallMatch] = useState({
-    title: "BWF Championship 2024",
-    round: "Semi-Finals",
-    homeTeam: "HOME TEAM",
-    awayTeam: "AWAY TEAM",
-    homeScore: 3,
-    awayScore: 2,
-    court1Status: "In Progress",
-    court2Status: "In Progress"
-  });
+    const teamAName = matchInfo.teamAName;
+    const teamBName = matchInfo.teamBName;
 
-  return (
-    <div className="w-full h-screen text-white overflow-hidden flex flex-col" style={{ aspectRatio: '16/9', background: 'linear-gradient(135deg, #004A90 0%, #E3161B 100%)' }}>
-      {/* Header with Tournament Info Only */}
-      <div className="h-16 flex items-center justify-center border-b-4 border-white/60" style={{ backgroundColor: 'rgba(0, 74, 144, 0.95)' }}>
-        <OverallMatch data={overallMatch} />
-      </div>
+    const court1Data = {
+        homeTeam: {
+            shortName: teamAName,
+            score: court1.score.teamA ?? 0,
+            sets: court1.score.setsA ?? 0,
+        },
+        awayTeam: {
+            shortName: teamBName,
+            score: court1.score.teamB ?? 0,
+            sets: court1.score.setsB ?? 0,
+        },
+        currentSet: court1.score.currentSet ?? 1,
+        server: court1.score.server ?? "home",
+        pastSets: court1.score.pastSets ?? [],
+    };
 
-      {/* Overall Score Section */}
-      <div className="border-b-4 border-white/80 shadow-2xl" style={{ backgroundColor: 'rgba(227, 22, 27, 0.95)' }}>
-        <OverallScore 
-          homeTeam={overallMatch.homeTeam}
-          awayTeam={overallMatch.awayTeam}
-          homeScore={overallMatch.homeScore}
-          awayScore={overallMatch.awayScore}
-        />
-      </div>
+    const court2Data = {
+        homeTeam: {
+            shortName: teamAName,
+            score: court2.score.teamA ?? 0,
+            sets: court2.score.setsA ?? 0,
+        },
+        awayTeam: {
+            shortName: teamBName,
+            score: court2.score.teamB ?? 0,
+            sets: court2.score.setsB ?? 0,
+        },
+        currentSet: court2.score.currentSet ?? 1,
+        server: court2.score.server ?? "away",
+        pastSets: court2.score.pastSets ?? [],
+    };
 
-      {/* Main Courts Area */}
-      <div className="flex-1 flex">
-        {/* Court 1 */}
-        <div className="flex-1 px-6 border-r-4 border-white/60">
-          <CourtDisplay 
-            courtNumber={1} 
-            data={court1Data}
-          />
+    const totalScoreTeamA = (court1.score.setsA ?? 0) + (court2.score.setsA ?? 0);
+    const totalScoreTeamB = (court1.score.setsB ?? 0) + (court2.score.setsB ?? 0);
+
+    return (
+        <div className="w-full h-screen text-white overflow-hidden flex flex-col" style={{ aspectRatio: '16/9', background: 'linear-gradient(135deg, #004A90 0%, #E3161B 100%)' }}>
+
+            {/* Header with Tournament Info Only */}
+            <div className="h-16 flex items-center justify-center border-b-4 border-white/60" style={{ backgroundColor: 'rgba(0, 74, 144, 0.95)' }}>
+                <OverallMatch
+                    data={{
+                        title: matchInfo.title ?? "Turnaj",
+                        round: matchInfo.round ?? "Finále",
+                        homeTeam: teamAName,
+                        awayTeam: teamBName,
+                        homeScore: totalScoreTeamA,
+                        awayScore: totalScoreTeamB,
+                        court1Status: matchInfo.court1Status ?? "Neznámý",
+                        court2Status: matchInfo.court2Status ?? "Neznámý",
+                    }}
+                />
+            </div>
+        {/* Celkové skóre týmů */}
+            <div className="border-b-4 border-white/80 shadow-2xl" style={{ backgroundColor: 'rgba(227, 22, 27, 0.95)' }}>
+
+            <OverallScore
+                    homeTeam={teamAName}
+                    awayTeam={teamBName}
+                    homeScore={totalScoreTeamA}
+                    awayScore={totalScoreTeamB}
+                />
+            </div>
+
+            {/* Skóre na jednotlivých kurtech */}
+            <div className="flex-1 flex">
+                {/* Court 1 */}
+                <div className="flex-1 px-6 border-r-4 border-white/60">
+                <CourtDisplay courtNumber={1} data={court1Data} />
+
+                </div>
+
+                {/* Court 2 */}
+                <div className="flex-1 px-6">
+                    <CourtDisplay courtNumber={2} data={court2Data} />
+                </div>
+            </div>
+
+            <div className="h-16 border-t-4 border-white/60" style={{ backgroundColor: 'rgba(0, 74, 144, 0.95)' }}>
+                <SponsorArea />
+            </div>
         </div>
-
-        {/* Court 2 */}
-        <div className="flex-1 px-6">
-          <CourtDisplay 
-            courtNumber={2} 
-            data={court2Data}
-          />
-        </div>
-      </div>
-
-      {/* Sponsor Area */}
-      <div className="h-16 border-t-4 border-white/60" style={{ backgroundColor: 'rgba(0, 74, 144, 0.95)' }}>
-        <SponsorArea />
-      </div>
-    </div>
-  );
+    );
 };
 
 export default Index;
