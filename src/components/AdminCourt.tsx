@@ -9,7 +9,7 @@ export default function AdminCourt() {
     const [error, setError] = useState("");
 
     const { isAuthed, checkPassword } = useAdminAuth(courtId!);
-    const { score, updateScore } = useCourtScore(courtId!);
+    const { score, updateScore, setScore } = useCourtScore(courtId!);
 
     const handleLogin = async () => {
         const success = await checkPassword(password);
@@ -17,6 +17,28 @@ export default function AdminCourt() {
             setError("Nesprávné heslo");
         }
     };
+
+    const handleEndSet = async () => {
+        const confirmed = window.confirm("Opravdu chcete ukončit set?");
+        if (!confirmed) return;
+
+        const newPastSets = [...(score.pastSets || []), { teamA: score.teamA, teamB: score.teamB }];
+
+        // Navýšit sady podle výsledku
+        const setsA = score.teamA > score.teamB ? score.setsA + 1 : score.setsA;
+        const setsB = score.teamB > score.teamA ? score.setsB + 1 : score.setsB;
+
+        await setScore({
+            teamA: 0,
+            teamB: 0,
+            setsA,
+            setsB,
+            currentSet: score.currentSet + 1,
+            server: score.server,
+            pastSets: newPastSets,
+        });
+    };
+
 
     if (!isAuthed) {
         return (
@@ -45,10 +67,18 @@ export default function AdminCourt() {
     return (
         <div className="min-h-screen bg-background text-foreground flex flex-col items-center justify-center gap-8 p-6">
             <h1 className="text-3xl font-bold">Ovládání kurtu {courtId}</h1>
+
             <div className="flex flex-col md:flex-row gap-10">
                 {/* Tým A */}
                 <div className="flex flex-col items-center p-4 border border-border rounded-xl bg-card shadow-sm w-64">
-                    <h2 className="font-semibold text-lg mb-2">Tým A</h2>
+                    <h2 className="font-semibold text-lg mb-2 flex items-center gap-2">
+                        Tým A
+                        {score.server === "home" && (
+                            <span className="text-sm px-3 py-1 bg-yellow-400 text-black rounded-full shadow-md font-semibold flex items-center gap-1">
+                                🏸 Servis
+                            </span>
+                        )}
+                    </h2>
                     <p className="text-4xl font-bold mb-4">{score.teamA}</p>
                     <div className="flex gap-4">
                         <button
@@ -68,7 +98,14 @@ export default function AdminCourt() {
 
                 {/* Tým B */}
                 <div className="flex flex-col items-center p-4 border border-border rounded-xl bg-card shadow-sm w-64">
-                    <h2 className="font-semibold text-lg mb-2">Tým B</h2>
+                    <h2 className="font-semibold text-lg mb-2 flex items-center gap-2">
+                        Tým B
+                        {score.server === "away" && (
+                            <span className="text-sm px-3 py-1 bg-yellow-400 text-black rounded-full shadow-md font-semibold flex items-center gap-1">
+                                🏸 Servis
+                            </span>
+                        )}
+                    </h2>
                     <p className="text-4xl font-bold mb-4">{score.teamB}</p>
                     <div className="flex gap-4">
                         <button
@@ -86,6 +123,28 @@ export default function AdminCourt() {
                     </div>
                 </div>
             </div>
+
+            {/* Konec setu */}
+            <button
+                onClick={handleEndSet}
+                className="mt-4 bg-muted text-foreground px-6 py-2 rounded-lg border border-border hover:bg-muted/80 transition-colors font-medium"
+            >
+                Konec setu
+            </button>
+
+            {/* Výpis setů */}
+            {score.pastSets && score.pastSets.length > 0 && (
+                <div className="w-full max-w-md mt-6">
+                    <h3 className="text-xl font-semibold mb-2">Předchozí sety</h3>
+                    <ul className="space-y-1 text-sm text-muted-foreground">
+                        {score.pastSets.map((set, index) => (
+                            <li key={index}>
+                                Set {index + 1} – A: {set.teamA}, B: {set.teamB}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )}
         </div>
     );
 }
