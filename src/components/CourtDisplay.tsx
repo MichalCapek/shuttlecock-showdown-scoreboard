@@ -25,18 +25,17 @@ const CourtDisplay: React.FC<CourtDisplayProps> = ({ courtNumber, data }) => {
       <div className="h-full flex flex-col py-6">
         {/* Court Header */}
         <div className="text-center mb-8">
-          <h2 className="text-4xl font-bold text-white mb-4">COURT {courtNumber}</h2>
+          <h2 className="text-4xl font-bold text-white mb-4">KURT {courtNumber}</h2>
 
           {/* Past Sets Scores */}
           {data.pastSets?.length > 0 && (
               <div className="text-white/90 text-2xl font-medium">
-                {data.pastSets.map((set, index) => (
-                    <span key={index}>
-                {set.teamA}:{set.teamB}
-              </span>
-                ))}
+                {data.pastSets
+                    .map((set) => `${set.teamA}:${set.teamB}`)
+                    .join(", ")}
               </div>
           )}
+
         </div>
 
         {/* Teams Display - Side by Side */}
@@ -55,7 +54,7 @@ const CourtDisplay: React.FC<CourtDisplayProps> = ({ courtNumber, data }) => {
               <h3 className="text-4xl font-bold text-white mb-6">{data.homeTeam.shortName}</h3>
               <div className="text-8xl font-bold text-white mb-6">{data.homeTeam.score}</div>
               {data.server === 'home' && (
-                  <Badge className="text-white text-lg px-4 py-2 bg-destructive">SERVING</Badge>
+                  <Badge className="text-white text-lg px-4 py-2 bg-destructive">SERVIS</Badge>
               )}
             </div>
           </div>
@@ -77,7 +76,7 @@ const CourtDisplay: React.FC<CourtDisplayProps> = ({ courtNumber, data }) => {
               <h3 className="text-4xl font-bold text-white mb-6">{data.awayTeam.shortName}</h3>
               <div className="text-8xl font-bold text-white mb-6">{data.awayTeam.score}</div>
               {data.server === 'away' && (
-                  <Badge className="text-white text-lg px-4 py-2" style={{ backgroundColor: '#E3161B', color: 'white' }}>SERVING</Badge>
+                  <Badge className="text-white text-lg px-4 py-2" style={{ backgroundColor: '#E3161B', color: 'white' }}>SERVIS</Badge>
               )}
             </div>
           </div>

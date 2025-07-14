@@ -100,7 +100,6 @@ export const useCourtScore = (courtId: string) => {
             setsB,
             currentSet: score.currentSet + 1,
             pastSets,
-            // server zůstává stejný
         };
 
         try {
@@ -119,6 +118,38 @@ export const useCourtScore = (courtId: string) => {
         }
     };
 
+    const resetMatch = async () => {
+        const docRef = doc(db, "courts", courtId);
+
+        const resetData: CourtScore = {
+            teamA: 0,
+            teamB: 0,
+            setsA: 0,
+            setsB: 0,
+            currentSet: 1,
+            server: "home",
+            pastSets: [],
+        };
+
+        try {
+            await setDoc(docRef, resetData, { merge: true });
+        } catch (err) {
+            console.error("Chyba při resetování zápasu:", err);
+        }
+    };
+
+    const toggleServer = async () => {
+        const docRef = doc(db, "courts", courtId);
+        const newServer: CourtScore["server"] = score.server === "home" ? "away" : "home";
+
+        try {
+            await setDoc(docRef, { server: newServer }, { merge: true });
+        } catch (err) {
+            console.error("Chyba při přepínání servera:", err);
+        }
+    };
+
+
     return {
         score,
         loading,
@@ -126,5 +157,7 @@ export const useCourtScore = (courtId: string) => {
         updateScore,
         endSet,
         setScore,
+        resetMatch,
+        toggleServer,
     };
 };
