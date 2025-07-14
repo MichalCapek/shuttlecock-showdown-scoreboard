@@ -5,18 +5,24 @@ import OverallScore from "../components/OverallScore";
 import SponsorArea from "../components/SponsorArea";
 import { useCourtScore } from "../hooks/useCourtScore";
 import { useMatchInfo } from "../hooks/useMatchInfo";
+import {useOverallScore} from "@/hooks/useOverallScore.tsx";
 
 const Index = () => {
     const court1 = useCourtScore("court1");
     const court2 = useCourtScore("court2");
+    const { overallScoreA, overallScoreB, loading: loadingOverall }= useOverallScore();
+
     const { matchInfo, loading } = useMatchInfo();
 
     if (
         loading ||
+        loadingOverall ||
         !matchInfo?.teamAName ||
         !matchInfo?.teamBName ||
         court1.loading ||
-        court2.loading
+        court2.loading ||
+        overallScoreA === null ||
+        overallScoreB === null
     ) {
         return (
             <div className="min-h-screen bg-background text-foreground flex items-center justify-center text-2xl">
@@ -24,6 +30,7 @@ const Index = () => {
             </div>
         );
     }
+
 
     const teamAName = matchInfo.teamAName;
     const teamBName = matchInfo.teamBName;
@@ -60,8 +67,9 @@ const Index = () => {
         pastSets: court2.score.pastSets ?? [],
     };
 
-    const totalScoreTeamA = (court1.score.setsA ?? 0) + (court2.score.setsA ?? 0);
-    const totalScoreTeamB = (court1.score.setsB ?? 0) + (court2.score.setsB ?? 0);
+    const totalScoreTeamA = overallScoreA;
+    const totalScoreTeamB = overallScoreB;
+
 
     return (
         <div className="w-full h-screen text-white overflow-hidden flex flex-col" style={{ aspectRatio: '16/9', background: 'linear-gradient(135deg, #004A90 0%, #E3161B 100%)' }}>
