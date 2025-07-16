@@ -7,8 +7,9 @@ interface MatchInfo {
     teamBName: string;
     title: string;
     round: string;
-    court1Status: string;
-    court2Status: string;
+    overallScoreA: number;
+    overallScoreB: number;
+    awayLogo: string;
 }
 
 export const useMatchInfo = () => {
@@ -30,8 +31,9 @@ export const useMatchInfo = () => {
                         teamBName: data.teamBName ?? "Tým B",
                         title: data.title ?? "Zápas",
                         round: data.round ?? "",
-                        court1Status: data.court1Status ?? "Neznámý",
-                        court2Status: data.court2Status ?? "Neznámý",
+                        overallScoreA: data.overallScoreA ?? 0,
+                        overallScoreB: data.overallScoreB ?? 0,
+                        awayLogo: data.awayLogo ?? "https://via.placeholder.com/150",
                     });
                     setError(null);
                 } else {

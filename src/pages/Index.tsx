@@ -84,8 +84,6 @@ const Index = () => {
                         awayTeam: teamBName,
                         homeScore: totalScoreTeamA,
                         awayScore: totalScoreTeamB,
-                        court1Status: matchInfo.court1Status ?? "Neznámý",
-                        court2Status: matchInfo.court2Status ?? "Neznámý",
                     }}
                 />
             </div>
@@ -97,6 +95,7 @@ const Index = () => {
                     awayTeam={teamBName}
                     homeScore={totalScoreTeamA}
                     awayScore={totalScoreTeamB}
+                    awayLogoFileName={matchInfo.awayLogo ?? "default.png"}
                 />
             </div>
 

@@ -9,8 +9,6 @@ interface OverallMatchProps {
     awayTeam: string;
     homeScore: number;
     awayScore: number;
-    court1Status: string;
-    court2Status: string;
   };
 }
 

@@ -1,15 +1,21 @@
 import React from 'react';
 import homeTeamLogo from '../../assets/BkBenatky_logo.png';
-import awayTeamLogo from '../../assets/KLI_logo.png';
+import awayTeamLogo from '../../assets/BRN_SLA_logo.png';
+const logos = import.meta.glob('../../assets/*.*', { eager: true, as: 'url' });
 
 interface OverallScoreProps {
     homeTeam: string;
     awayTeam: string;
     homeScore: number;
     awayScore: number;
+    awayLogoFileName: string;
 }
 
-const OverallScore: React.FC<OverallScoreProps> = ({ homeTeam, awayTeam, homeScore, awayScore }) => {
+const OverallScore: React.FC<OverallScoreProps> = ({ homeTeam, awayTeam, homeScore, awayScore, awayLogoFileName }) => {
+    const awayLogoPath = `../../assets/${awayLogoFileName}`;
+    const awayLogoUrl = logos[awayLogoPath] || logos['../../assets/default.png'];
+    console.log(awayLogoPath, awayLogoUrl);
+
     return (
         <div className="flex items-center justify-center space-x-12 py-6">
             <div className="flex items-center space-x-6">
@@ -38,7 +44,7 @@ const OverallScore: React.FC<OverallScoreProps> = ({ homeTeam, awayTeam, homeSco
                 </div>
                 <div className="w-40 h-40 bg-white rounded-full flex items-center justify-center shadow-lg p-3">
             <img
-                src={awayTeamLogo}
+                src={awayLogoPath}
                 alt="Home Team Logo"
                 className="w-full h-full object-contain"
             />
