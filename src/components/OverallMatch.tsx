@@ -28,23 +28,20 @@ const OverallMatch: React.FC<OverallMatchProps> = ({ data }) => {
       setCurrentTime(formatted);
     };
 
-    updateTime(); // inicializuj hned
-    const interval = setInterval(updateTime, 60 * 1000); // aktualizace každou minutu
+    updateTime();
+    const interval = setInterval(updateTime, 60 * 1000);
     return () => clearInterval(interval);
   }, []);
 
   return (
-      <div className="flex justify-between items-center w-full px-6 py-4">
-        {/* Match Info vlevo */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center w-full px-4 sm:px-6 py-2 sm:py-4 space-y-2 sm:space-y-0">
         <div className="flex items-center space-x-4">
-          <Trophy className="h-8 w-8" style={{ color: '#E3161B' }} />
-          <h1 className="text-2xl font-bold text-white drop-shadow-md">
+          <Trophy className="h-6 w-6 sm:h-8 sm:w-8" style={{ color: '#E3161B' }} />
+          <h1 className="text-xl sm:text-2xl font-bold text-white drop-shadow-md">
             {data.title} – {data.round}
           </h1>
         </div>
-
-        {/* Datum a čas vpravo */}
-        <h1 className="text-2xl font-bold text-white drop-shadow-md">
+        <h1 className="text-xl sm:text-2xl font-bold text-white drop-shadow-md">
           {currentTime}
         </h1>
       </div>

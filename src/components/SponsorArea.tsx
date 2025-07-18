@@ -3,7 +3,6 @@ import benatkyLogo from '../../assets/benatky_logo.gif';
 import CRProjectLogo from '../../assets/CR_Project_logo_new.png';
 import victorLogo from '../../assets/victor-logo.png';
 
-
 const SponsorArea: React.FC = () => {
     const [currentSponsor, setCurrentSponsor] = useState(0);
 
@@ -22,10 +21,9 @@ const SponsorArea: React.FC = () => {
     }, [sponsors.length]);
 
     return (
-        <div className="h-full flex items-center justify-center bg-background py-4 px-6">
-            <div className="flex items-center space-x-6">
-                <span className="text-foreground font-medium text-sm">Partneři klubu:</span>
-
+        <div className="w-full h-full flex flex-col sm:flex-row items-center justify-center space-y-2 sm:space-y-0 sm:space-x-6 px-4 py-4">
+            <span className="text-foreground font-medium text-sm sm:text-base">Partneři klubu:</span>
+            <div className="flex items-center space-x-4 sm:space-x-6">
                 {sponsors.map((sponsor, index) => (
                     <div
                         key={sponsor.name}
@@ -36,7 +34,7 @@ const SponsorArea: React.FC = () => {
                         <img
                             src={sponsor.logo}
                             alt={sponsor.name}
-                            className="h-12 w-auto object-contain"
+                            className="h-8 sm:h-12 w-auto object-contain"
                         />
                     </div>
                 ))}
