@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import AdminCourt from "@/components/AdminCourt.tsx";
+import AdminGlobal from "@/components/AdminGlobal.tsx";
 
 const queryClient = new QueryClient();
 
@@ -20,6 +21,7 @@ const App = () => {
               <Routes>
                 <Route path="/" element={<Index />} />
                 <Route path="/admin/:courtId" element={<AdminCourt />} />
+                <Route path="/admin" element={<AdminGlobal />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </BrowserRouter>

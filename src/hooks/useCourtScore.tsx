@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { doc, onSnapshot, updateDoc, setDoc } from "firebase/firestore";
 import { db } from "../../firebaseConfig";
 
-interface CourtScore {
+export interface CourtScore {
     teamA: number;
     teamB: number;
     setsA: number;
