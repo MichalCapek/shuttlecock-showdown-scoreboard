@@ -21,30 +21,55 @@ const OverallScore: React.FC<OverallScoreProps> = ({
     const awayLogoUrl = logos[awayLogoPath] || logos['../../assets/default.png'];
 
     return (
-        <div className="flex flex-col sm:flex-row items-center justify-center sm:space-x-12 py-4 sm:py-6 px-6 sm:px-4 space-y-6 sm:space-y-0">
-            {/* Home Team */}
-            <div className="w-full sm:w-auto flex items-center justify-between sm:justify-center sm:space-x-6">
-                <div className="flex items-center space-x-4">
-                    <div className="w-16 h-16 sm:w-40 sm:h-40 bg-white rounded-full flex items-center justify-center shadow-lg p-2 sm:p-3">
-                        <img src={homeTeamLogo} alt="Home Team Logo" className="w-full h-full object-contain" />
+        <div className="w-full px-6 sm:px-4 py-4 sm:py-6">
+            {/* Mobilní zobrazení */}
+            <div className="flex flex-col sm:hidden space-y-6">
+                {/* Home */}
+                <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
+                        <div className="w-14 h-14 bg-white rounded-full flex items-center justify-center shadow-lg p-2">
+                            <img src={homeTeamLogo} alt="Home Team Logo" className="w-full h-full object-contain" />
+                        </div>
+                        <div className="text-white text-base font-bold">{homeTeam}</div>
                     </div>
-                    <div className="text-white text-lg sm:text-2xl font-semibold">{homeTeam}</div>
+                    <div className="text-white text-4xl font-black drop-shadow-lg">{homeScore}</div>
                 </div>
-                <div className="text-white text-6xl sm:text-9xl font-black drop-shadow-lg pr-2 sm:pr-0">{homeScore}</div>
+
+                {/* Away */}
+                <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
+                        <div className="w-14 h-14 bg-white rounded-full flex items-center justify-center shadow-lg p-2">
+                            <img src={awayLogoUrl} alt="Away Team Logo" className="w-full h-full object-contain" />
+                        </div>
+                        <div className="text-white text-base font-bold">{awayTeam}</div>
+                    </div>
+                    <div className="text-white text-4xl font-black drop-shadow-lg">{awayScore}</div>
+                </div>
             </div>
 
-            {/* VS */}
-            <div className="text-white text-base sm:text-2xl font-bold opacity-80">VS</div>
 
-            {/* Away Team */}
-            <div className="w-full sm:w-auto flex items-center justify-between sm:justify-center sm:space-x-6">
-                <div className="flex items-center space-x-4">
-                    <div className="w-16 h-16 sm:w-40 sm:h-40 bg-white rounded-full flex items-center justify-center shadow-lg p-2 sm:p-3">
+            {/* Desktop zobrazení */}
+            <div className="hidden sm:flex items-center justify-center space-x-12">
+                {/* Home */}
+                <div className="flex items-center space-x-6">
+                    <div className="w-40 h-40 bg-white rounded-full flex items-center justify-center shadow-lg p-3">
+                        <img src={homeTeamLogo} alt="Home Team Logo" className="w-full h-full object-contain" />
+                    </div>
+                    <div className="text-white text-2xl font-semibold">{homeTeam}</div>
+                    <div className="text-white text-9xl font-black drop-shadow-lg">{homeScore}</div>
+                </div>
+
+                {/* VS */}
+                <div className="text-white text-2xl font-bold opacity-80">VS</div>
+
+                {/* Away */}
+                <div className="flex items-center space-x-6">
+                    <div className="text-white text-9xl font-black drop-shadow-lg">{awayScore}</div>
+                    <div className="text-white text-2xl font-semibold">{awayTeam}</div>
+                    <div className="w-40 h-40 bg-white rounded-full flex items-center justify-center shadow-lg p-3">
                         <img src={awayLogoUrl} alt="Away Team Logo" className="w-full h-full object-contain" />
                     </div>
-                    <div className="text-white text-lg sm:text-2xl font-semibold">{awayTeam}</div>
                 </div>
-                <div className="text-white text-6xl sm:text-9xl font-black drop-shadow-lg pr-2 sm:pr-0">{awayScore}</div>
             </div>
         </div>
     );
