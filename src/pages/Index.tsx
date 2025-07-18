@@ -69,11 +69,9 @@ const Index = () => {
     const totalScoreTeamB = overallScoreB;
 
     return (
-        <div
-            className="w-full h-screen text-white overflow-hidden flex flex-col"
-            style={{ aspectRatio: "16/9", background: "linear-gradient(135deg, #004A90 0%, #E3161B 100%)" }}
-        >
-            <div className="h-auto sm:h-16 flex items-center justify-center border-b-4 border-white/60" style={{ backgroundColor: "rgba(0, 74, 144, 0.95)" }}>
+        <div className="w-full min-h-screen text-white flex flex-col" style={{ background: "linear-gradient(135deg, #004A90 0%, #E3161B 100%)" }}>
+
+        <div className="h-auto sm:h-16 flex items-center justify-center border-b-4 border-white/60" style={{ backgroundColor: "rgba(0, 74, 144, 0.95)" }}>
                 <OverallMatch
                     data={{
                         title: matchInfo.title ?? "Turnaj",
