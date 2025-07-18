@@ -44,8 +44,8 @@ const OverallScore: React.FC<OverallScoreProps> = ({ homeTeam, awayTeam, homeSco
                 </div>
                 <div className="w-40 h-40 bg-white rounded-full flex items-center justify-center shadow-lg p-3">
             <img
-                src={awayLogoPath}
-                alt="Home Team Logo"
+                src={awayLogoUrl}
+                alt="Away Team Logo"
                 className="w-full h-full object-contain"
             />
                 </div>
