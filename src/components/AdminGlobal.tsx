@@ -195,13 +195,13 @@ export default function AdminGlobal() {
 
                 {/* PRAVÝ SLOUPEC – Oba kurty */}
                 <div className="space-y-6">
-                    {[{ label: "Court 1", data: court1 }, { label: "Court 2", data: court2 }].map(({ label, data }, i) => (
+                    {[{ label: "Kurt 1", data: court1 }, { label: "Kurt 2", data: court2 }].map(({ label, data }, i) => (
                         <div key={i} className="bg-card border p-4 rounded-lg">
                             <h3 className="font-semibold mb-2">{label}</h3>
                             {data ? (
                                 <>
-                                    <p>Skóre A: {data.teamA} | Sety: {data.setsA}</p>
-                                    <p>Skóre B: {data.teamB} | Sety: {data.setsB}</p>
+                                    <p>Skóre Domácí: {data.teamA} | Sety: {data.setsA}</p>
+                                    <p>Skóre Hosté: {data.teamB} | Sety: {data.setsB}</p>
                                     <p>Aktuální set: {data.currentSet}</p>
                                     <p>Servis: {data.server}</p>
                                     {data.pastSets?.length > 0 && (
