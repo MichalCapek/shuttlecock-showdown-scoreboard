@@ -7,6 +7,7 @@ import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import AdminCourt from "@/components/AdminCourt.tsx";
 import AdminGlobal from "@/components/AdminGlobal.tsx";
+import StreamOverlay from "@/components/StreamOverlay.tsx";
 
 const queryClient = new QueryClient();
 
@@ -23,6 +24,7 @@ const App = () => {
                 <Route path="/admin/:courtId" element={<AdminCourt />} />
                 <Route path="/admin" element={<AdminGlobal />} />
                 <Route path="*" element={<NotFound />} />
+                <Route path="/stream/:courtId" element={<StreamOverlay />} />
               </Routes>
             </BrowserRouter>
           </TooltipProvider>
