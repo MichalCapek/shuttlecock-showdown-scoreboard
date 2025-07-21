@@ -103,3 +103,12 @@ All colors MUST be HSL.
     @apply bg-background text-foreground;
   }
 }
+
+body.transparent-overlay {
+  background-color: transparent !important;
+  --background: 0 0% 0% !important;
+}
+
+body.transparent-overlay #root {
+  background-color: transparent !important;
+}
