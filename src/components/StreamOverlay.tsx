@@ -89,25 +89,33 @@ const StreamOverlay: React.FC = () => {
         <>
             <style>
                 {`
-                html, body {
-                    background: transparent !important;
-                    margin: 0;
-                    padding: 0;
-                    overflow: hidden;
-                }
+html, body, #root {
+    background-color: rgba(0,0,0,0) !important;
+    background: transparent !important;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
 
-                @keyframes scoreChange {
-                    0% { background-color: #facc15; color: #000; }
-                    100% { background-color: inherit; color: inherit; }
-                }
+/* Extra hack kvůli OBS a chromium overlay engine */
+body {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+}
 
-                .animate-scoreChange {
-                    animation: scoreChange 0.5s ease-in-out;
-                }
-                `}
+@keyframes scoreChange {
+    0% { background-color: #facc15; color: #000; }
+    100% { background-color: inherit; color: inherit; }
+}
+
+.animate-scoreChange {
+    animation: scoreChange 0.5s ease-in-out;
+}
+`}
             </style>
 
-            <div className="fixed top-4 left-4 bg-[#061B40] text-white rounded-xl px-6 py-3 shadow-xl z-50 font-bold text-lg scale-150 origin-top-left">
+
+            <div className="fixed top-4 left-4 bg-background text-white rounded-xl px-6 py-3 shadow-xl z-50 font-bold text-lg scale-150 origin-top-left">
                 <div
                     className="grid gap-y-2 items-center"
                     style={{

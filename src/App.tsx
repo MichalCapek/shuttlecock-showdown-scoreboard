@@ -13,7 +13,7 @@ const queryClient = new QueryClient();
 
 const App = () => {
   return (
-      <div className="bg-background text-foreground min-h-screen">
+      <div className="bg-transparent text-foreground min-h-screen">
         <QueryClientProvider client={queryClient}>
           <TooltipProvider>
             <Toaster />
