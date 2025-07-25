@@ -15,7 +15,7 @@ const SingleCourtView: React.FC = () => {
         <div className="w-full h-screen bg-black text-white flex flex-col justify-center items-center px-6">
             {/* Past sets */}
             {score.pastSets.length > 0 && (
-                <div className="text-yellow-300 text-3xl font-bold mb-10 tracking-wider flex flex-wrap gap-4 justify-center">
+                <div className="text-yellow-300 text-7xl font-bold mb-10 tracking-wider flex flex-wrap gap-4 justify-center">
                     {score.pastSets.map((s, i) => (
                         <div
                             key={i}
@@ -39,7 +39,7 @@ const SingleCourtView: React.FC = () => {
                     <h2 className="text-4xl sm:text-6xl font-extrabold mb-8 text-center">
                         {matchInfo.teamAName}
                     </h2>
-                    <div className="text-8xl sm:text-9xl font-extrabold mb-6">{score.teamA}</div>
+                    <div className="text-9xl sm:text-9xl font-extrabold mb-6">{score.teamA}</div>
                     {score.server === "home" && (
                         <img src={shuttlecock} alt="servis" className="w-8 h-8 sm:w-10 sm:h-10" />
                     )}
@@ -59,7 +59,7 @@ const SingleCourtView: React.FC = () => {
                     <h2 className="text-4xl sm:text-6xl font-extrabold mb-8 text-center">
                         {matchInfo.teamBName}
                     </h2>
-                    <div className="text-8xl sm:text-9xl font-extrabold mb-6">{score.teamB}</div>
+                    <div className="text-9xl sm:text-9xl font-extrabold mb-6">{score.teamB}</div>
                     {score.server === "away" && (
                         <img src={shuttlecock} alt="servis" className="w-8 h-8 sm:w-10 sm:h-10" />
                     )}
