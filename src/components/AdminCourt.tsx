@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { useCourtScore } from "../hooks/useCourtScore";
 import { useAdminAuth } from "../hooks/useAdminAuth";
+import { useMatchInfo } from "../hooks/useMatchInfo";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function AdminCourt() {
@@ -9,6 +10,7 @@ export default function AdminCourt() {
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
     const [isSwapped, setIsSwapped] = useState(false);
+    const { matchInfo, loading: loadingMatch } = useMatchInfo();
 
     const { isAuthed, checkPassword } = useAdminAuth(courtId!);
     const { score, updateScore, setScore, resetMatch, toggleServer } = useCourtScore(courtId!);
@@ -54,12 +56,8 @@ export default function AdminCourt() {
     }) => (
         <div className="flex flex-col items-center p-4 border border-border rounded-xl bg-card shadow-sm w-64">
             <h2 className="font-semibold text-lg mb-2 flex items-center gap-2">
-                Tým {team}
-                {isServer && (
-                    <span className="text-sm px-3 py-1 bg-yellow-400 text-black rounded-full shadow-md font-semibold flex items-center gap-1">
-                        🏸 Servis
-                    </span>
-                )}
+                {team === "A" ? matchInfo.teamAName : matchInfo.teamBName}
+
             </h2>
             <p className="text-4xl font-bold mb-4">{scoreValue}</p>
             <div className="flex gap-4">
@@ -75,6 +73,13 @@ export default function AdminCourt() {
                 >
                     -
                 </button>
+            </div>
+            <div className="flex gap-4 p-4">
+                {isServer && (
+                    <span className="text-sm px-3 py-1 bg-yellow-400 text-black rounded-full shadow-md font-semibold flex items-center gap-1">
+                            🏸 Servis
+                        </span>
+                )}
             </div>
         </div>
     );
