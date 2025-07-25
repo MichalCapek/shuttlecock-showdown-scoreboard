@@ -6,6 +6,7 @@ import shuttlecock from "../../assets/shuttlecock.png";
 
 const StreamOverlay: React.FC = () => {
     const { courtId } = useParams<{ courtId: string }>();
+    const { matchInfo, loading: loadingMatch } = useMatchInfo();
     const { score, loading: loadingScore } = useCourtScore(courtId ?? "");
 
     const [prevScores, setPrevScores] = useState<{ teamA: number[]; teamB: number[] }>({
