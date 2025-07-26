@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useCourtScore } from "../hooks/useCourtScore";
 import { useAdminAuth } from "../hooks/useAdminAuth";
 import { useMatchInfo } from "../hooks/useMatchInfo";
 import { motion, AnimatePresence } from "framer-motion";
+import {useOverrideNames} from "@/hooks/useOverrideNames.tsx";
 
 export default function AdminCourt() {
     const { courtId } = useParams();
@@ -14,6 +15,16 @@ export default function AdminCourt() {
 
     const { isAuthed, checkPassword } = useAdminAuth(courtId!);
     const { score, updateScore, setScore, resetMatch, toggleServer } = useCourtScore(courtId!);
+
+    const { overrideNames, saveOverrideNames, clearOverrideNames, loading: loadingOverride } =
+        useOverrideNames(courtId!);
+    const [showModal, setShowModal] = useState(false);
+    const [formNames, setFormNames] = useState({ teamAName: "", teamBName: "" });
+
+    const handleSaveOverrides = async () => {
+        await saveOverrideNames(formNames.teamAName, formNames.teamBName);
+        setShowModal(false);
+    };
 
     const handleLogin = async () => {
         const success = await checkPassword(password);
@@ -53,36 +64,40 @@ export default function AdminCourt() {
         isServer: boolean;
         onIncrement: () => void;
         onDecrement: () => void;
-    }) => (
-        <div className="flex flex-col items-center p-4 border border-border rounded-xl bg-card shadow-sm w-64">
-            <h2 className="font-semibold text-lg mb-2 flex items-center gap-2">
-                {team === "A" ? matchInfo.teamAName : matchInfo.teamBName}
+    }) => {
+        const displayName =
+            team === "A"
+                ? overrideNames.teamANameOverride || matchInfo.teamAName
+                : overrideNames.teamBNameOverride || matchInfo.teamBName;
 
-            </h2>
-            <p className="text-4xl font-bold mb-4">{scoreValue}</p>
-            <div className="flex gap-4">
-                <button
-                    onClick={onIncrement}
-                    className="bg-primary text-white px-4 py-2 rounded hover:bg-primary/90"
-                >
-                    +
-                </button>
-                <button
-                    onClick={onDecrement}
-                    className="bg-destructive text-white px-4 py-2 rounded hover:bg-destructive/90"
-                >
-                    -
-                </button>
-            </div>
-            <div className="flex gap-4 p-4">
-                {isServer && (
-                    <span className="text-sm px-3 py-1 bg-yellow-400 text-black rounded-full shadow-md font-semibold flex items-center gap-1">
+        return (
+            <div className="flex flex-col items-center p-4 border border-border rounded-xl bg-card shadow-sm w-64">
+                <h2 className="font-semibold text-lg mb-2 flex items-center gap-2">{displayName}</h2>
+                <p className="text-4xl font-bold mb-4">{scoreValue}</p>
+                <div className="flex flex-col items-center gap-2">
+                    <button
+                        onClick={onIncrement}
+                        className="bg-primary text-white px-6 py-4 rounded-lg text-2xl font-bold hover:bg-primary/90 transition-all shadow-md"
+                    >
+                        +
+                    </button>
+                    <button
+                        onClick={onDecrement}
+                        className="bg-destructive text-white px-4 py-1 rounded text-sm hover:bg-destructive/90"
+                    >
+                        -
+                    </button>
+                </div>
+                <div className="flex gap-4 p-4">
+                    {isServer && (
+                        <span className="text-sm px-3 py-1 bg-yellow-400 text-black rounded-full shadow-md font-semibold flex items-center gap-1">
                             🏸 Servis
                         </span>
-                )}
+                    )}
+                </div>
             </div>
-        </div>
-    );
+        );
+    };
 
     if (!isAuthed) {
         return (
@@ -112,15 +127,27 @@ export default function AdminCourt() {
         <div className="min-h-screen bg-background text-foreground flex flex-col items-center justify-center gap-8 p-6">
             <h1 className="text-3xl font-bold">Ovládání kurtu {courtId}</h1>
 
-            {/* Přepínač zobrazení týmů */}
-            <button
-                onClick={() => setIsSwapped((prev) => !prev)}
-                className="bg-muted border border-border text-sm px-4 py-2 rounded hover:bg-muted/80 transition-colors"
-            >
-                Prohodit zobrazení týmů
-            </button>
+            <div className="flex flex-wrap gap-4">
+                <button
+                    onClick={() => setIsSwapped((prev) => !prev)}
+                    className="bg-muted border border-border text-sm px-4 py-2 rounded hover:bg-muted/80 transition-colors"
+                >
+                    Prohodit zobrazení týmů
+                </button>
+                <button
+                    onClick={() => {
+                        setFormNames({
+                            teamAName: overrideNames.teamANameOverride || "",
+                            teamBName: overrideNames.teamBNameOverride || "",
+                        });
+                        setShowModal(true);
+                    }}
+                    className="bg-blue-500 text-white text-sm px-4 py-2 rounded hover:bg-blue-600 transition-colors"
+                >
+                    Upravit jména týmů
+                </button>
+            </div>
 
-            {/* Boxy týmů s animací pouze při změně pořadí */}
             <AnimatePresence mode="wait">
                 <motion.div
                     key={isSwapped ? "swapped" : "normal"}
@@ -168,7 +195,6 @@ export default function AdminCourt() {
                 </motion.div>
             </AnimatePresence>
 
-            {/* Přepnout podávajícího */}
             <button
                 onClick={toggleServer}
                 className="bg-yellow-500 text-black px-4 py-2 rounded hover:bg-yellow-600 font-medium"
@@ -176,7 +202,6 @@ export default function AdminCourt() {
                 Přepnout podávajícího
             </button>
 
-            {/* Tlačítka: konec setu + reset */}
             <div className="flex flex-wrap gap-4 mt-4">
                 <button
                     onClick={handleEndSet}
@@ -197,7 +222,6 @@ export default function AdminCourt() {
                 </button>
             </div>
 
-            {/* Výpis setů */}
             {score.pastSets && score.pastSets.length > 0 && (
                 <div className="w-full max-w-md mt-6">
                     <h3 className="text-xl font-semibold mb-2">Předchozí sety</h3>
@@ -208,6 +232,56 @@ export default function AdminCourt() {
                             </li>
                         ))}
                     </ul>
+                </div>
+            )}
+
+            {/* Modal */}
+            {showModal && (
+                <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
+                    <div className="bg-white text-black p-6 rounded-xl w-full max-w-md shadow-lg space-y-4">
+                        <h2 className="text-xl font-semibold">Přepsat jména týmů</h2>
+                        <input
+                            type="text"
+                            placeholder="Tým A"
+                            className="w-full border px-3 py-2 rounded"
+                            value={formNames.teamAName}
+                            onChange={(e) => setFormNames({ ...formNames, teamAName: e.target.value })}
+                        />
+                        <input
+                            type="text"
+                            placeholder="Tým B"
+                            className="w-full border px-3 py-2 rounded"
+                            value={formNames.teamBName}
+                            onChange={(e) => setFormNames({ ...formNames, teamBName: e.target.value })}
+                        />
+                        <div className="flex justify-between items-center pt-2 gap-2 flex-wrap">
+                            <button
+                                onClick={async () => {
+                                    await clearOverrideNames();
+                                    setFormNames({ teamAName: "", teamBName: "" });
+                                    setShowModal(false);
+                                }}
+                                className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 text-sm"
+                            >
+                                Vymazat jména
+                            </button>
+                            <div className="flex gap-2 ml-auto">
+                                <button
+                                    onClick={() => setShowModal(false)}
+                                    className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
+                                >
+                                    Zrušit
+                                </button>
+                                <button
+                                    onClick={handleSaveOverrides}
+                                    className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                                >
+                                    Uložit
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             )}
         </div>

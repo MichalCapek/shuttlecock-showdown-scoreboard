@@ -2,14 +2,19 @@ import React from "react";
 import { useParams } from "react-router-dom";
 import { useMatchInfo } from "../hooks/useMatchInfo";
 import { useCourtScore } from "../hooks/useCourtScore";
+import { useOverrideNames } from "../hooks/useOverrideNames"; // přidáno
 import shuttlecock from "../../assets/shuttlecock.png";
 
 const SingleCourtView: React.FC = () => {
     const { courtId } = useParams<{ courtId: string }>();
     const { score, loading } = useCourtScore(courtId ?? "");
     const { matchInfo, loading: loadingMatch } = useMatchInfo();
+    const { overrideNames, loading: loadingOverride } = useOverrideNames(courtId ?? ""); // přidáno
 
-    if (!courtId || loading || loadingMatch || !matchInfo) return null;
+    if (!courtId || loading || loadingMatch || loadingOverride || !matchInfo) return null;
+
+    const teamAName = overrideNames.teamANameOverride?.trim() || matchInfo.teamAName;
+    const teamBName = overrideNames.teamBNameOverride?.trim() || matchInfo.teamBName;
 
     return (
         <div className="w-full h-screen bg-black text-white flex flex-col justify-center items-center px-6">
@@ -37,7 +42,7 @@ const SingleCourtView: React.FC = () => {
                     }`}
                 >
                     <h2 className="text-4xl sm:text-6xl font-extrabold mb-8 text-center">
-                        {matchInfo.teamAName}
+                        {teamAName}
                     </h2>
                     <div className="text-9xl sm:text-9xl font-extrabold mb-6">{score.teamA}</div>
                     {score.server === "home" && (
@@ -57,7 +62,7 @@ const SingleCourtView: React.FC = () => {
                     }`}
                 >
                     <h2 className="text-4xl sm:text-6xl font-extrabold mb-8 text-center">
-                        {matchInfo.teamBName}
+                        {teamBName}
                     </h2>
                     <div className="text-9xl sm:text-9xl font-extrabold mb-6">{score.teamB}</div>
                     {score.server === "away" && (
