@@ -10,7 +10,7 @@ interface CourtControlShellProps {
     setsB: number;
     tracker?: React.ReactNode;
     actionBar: React.ReactNode;
-    children: React.ReactNode;
+    children?: React.ReactNode;
 }
 
 const navItems = [
@@ -110,9 +110,13 @@ export function CourtControlShell({
 
             {tracker}
 
-            <div className="flex min-h-0 flex-1 flex-col justify-end px-2 pb-2 sm:px-3">
-                {children}
-            </div>
+            {children ? (
+                <div className="flex min-h-0 flex-1 flex-col justify-end px-2 pb-2 sm:px-3">
+                    {children}
+                </div>
+            ) : (
+                <div className="min-h-0 flex-1" />
+            )}
 
             <div className="court-control-actions shrink-0 border-t border-border/60 bg-white">
                 {actionBar}

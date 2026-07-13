@@ -17,6 +17,7 @@ import { AdminLogin } from "@/components/admin/AdminLogin";
 import { CourtControlShell } from "@/components/admin/CourtControlShell";
 import { CourtTrackerPanel } from "@/components/admin/CourtTrackerPanel";
 import { CourtTimerPanel } from "@/components/admin/CourtTimerPanel";
+import { PastSetsMiniBar } from "@/components/admin/PastSetsMiniBar";
 import { TeamNameOverrideDialog } from "@/components/admin/TeamNameOverrideDialog";
 import { ConfirmDialog } from "@/components/admin/ConfirmDialog";
 import { cn } from "@/lib/utils";
@@ -237,25 +238,33 @@ export default function AdminCourt() {
                             onSyncServerPosition={syncServerPosition}
                             onToggleServer={handleToggleServer}
                         />
+                        <div className="mx-2 mt-5 shrink-0 border-t border-border/50 pt-3 sm:mx-3">
+                            <div className="flex w-full justify-center gap-2">
+                                {isHomeOnLeft ? (
+                                    <>
+                                        <TeamBox {...teamAProps} />
+                                        <TeamBox {...teamBProps} />
+                                    </>
+                                ) : (
+                                    <>
+                                        <TeamBox {...teamBProps} />
+                                        <TeamBox {...teamAProps} />
+                                    </>
+                                )}
+                            </div>
+                        </div>
                         <CourtTimerPanel />
+                        <PastSetsMiniBar
+                            teamAName={getTeamName("A")}
+                            teamBName={getTeamName("B")}
+                            pastSets={score.pastSets ?? []}
+                            currentTeamA={score.teamA}
+                            currentTeamB={score.teamB}
+                        />
                     </>
                 }
                 actionBar={actionBar}
-            >
-                <div className="flex justify-center gap-2">
-                    {isHomeOnLeft ? (
-                        <>
-                            <TeamBox {...teamAProps} />
-                            <TeamBox {...teamBProps} />
-                        </>
-                    ) : (
-                        <>
-                            <TeamBox {...teamBProps} />
-                            <TeamBox {...teamAProps} />
-                        </>
-                    )}
-                </div>
-            </CourtControlShell>
+            />
 
             <TeamNameOverrideDialog
                 open={showNameDialog}
