@@ -104,11 +104,44 @@ All colors MUST be HSL.
   }
 }
 
-body.transparent-overlay {
+body.transparent-overlay,
+body.stream-overlay {
   background-color: transparent !important;
   --background: 0 0% 0% !important;
 }
 
-body.transparent-overlay #root {
+body.transparent-overlay #root,
+body.stream-overlay #root {
   background-color: transparent !important;
+}
+
+/* Stream overlay (OBS) – transparent page + score flash animation */
+body.stream-overlay {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+
+@keyframes scoreChange {
+  0% { background-color: #facc15; color: #000; }
+  100% { background-color: inherit; color: inherit; }
+}
+
+.animate-scoreChange {
+  animation: scoreChange 0.5s ease-in-out;
+}
+
+/* Court umpire control – lock to viewport, no scroll */
+.court-control {
+  touch-action: manipulation;
+  overscroll-behavior: none;
+}
+
+html:has(.court-control),
+html:has(.court-control) body,
+html:has(.court-control) #root {
+  overflow: hidden;
+  height: 100%;
 }
