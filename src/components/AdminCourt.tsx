@@ -17,6 +17,7 @@ import { Button } from "@/components/ui/button";
 import { AdminLogin } from "@/components/admin/AdminLogin";
 import { CourtControlShell } from "@/components/admin/CourtControlShell";
 import { CourtTrackerPanel } from "@/components/admin/CourtTrackerPanel";
+import { CourtTimerPanel } from "@/components/admin/CourtTimerPanel";
 import { TeamNameOverrideDialog } from "@/components/admin/TeamNameOverrideDialog";
 import { ConfirmDialog } from "@/components/admin/ConfirmDialog";
 import { cn } from "@/lib/utils";
@@ -227,21 +228,24 @@ export default function AdminCourt() {
                 setsA={score.setsA}
                 setsB={score.setsB}
                 tracker={
-                    <CourtTrackerPanel
-                        tracker={tracker}
-                        scoreServer={score.server}
-                        scoreA={score.teamA}
-                        scoreB={score.teamB}
-                        teamAName={getTeamName("A")}
-                        teamBName={getTeamName("B")}
-                        getDisplayName={getTrackerDisplayName}
-                        getSinglesNameForSide={getSinglesNameForSide}
-                        onSetGameMode={setGameMode}
-                        onSwapPartnersOnSide={swapPartnersOnSide}
-                        onSavePlayers={handleSavePlayers}
-                        onSyncServerFromScore={handleSyncServerFromScore}
-                        onSyncServerPosition={syncServerPosition}
-                    />
+                    <>
+                        <CourtTrackerPanel
+                            tracker={tracker}
+                            scoreServer={score.server}
+                            scoreA={score.teamA}
+                            scoreB={score.teamB}
+                            teamAName={getTeamName("A")}
+                            teamBName={getTeamName("B")}
+                            getDisplayName={getTrackerDisplayName}
+                            getSinglesNameForSide={getSinglesNameForSide}
+                            onSetGameMode={setGameMode}
+                            onSwapPartnersOnSide={swapPartnersOnSide}
+                            onSavePlayers={handleSavePlayers}
+                            onSyncServerFromScore={handleSyncServerFromScore}
+                            onSyncServerPosition={syncServerPosition}
+                        />
+                        <CourtTimerPanel />
+                    </>
                 }
                 actionBar={actionBar}
             >
