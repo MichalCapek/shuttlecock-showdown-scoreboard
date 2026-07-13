@@ -1,6 +1,6 @@
 import React from 'react';
 import homeTeamLogo from '../../assets/BkBenatky_logo.png';
-const logos = import.meta.glob('../../assets/*.*', { eager: true, as: 'url' });
+const logos = import.meta.glob('../../assets/*.*', { eager: true, query: '?url', import: 'default' });
 
 interface OverallScoreProps {
     homeTeam: string;

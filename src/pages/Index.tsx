@@ -1,19 +1,21 @@
-import React from "react";
 import CourtDisplay from "../components/CourtDisplay";
 import OverallMatch from "../components/OverallMatch";
 import OverallScore from "../components/OverallScore";
 import SponsorArea from "../components/SponsorArea";
+import { LoadingScreen } from "../components/LoadingScreen";
 import { useCourtScore } from "../hooks/useCourtScore";
 import { useMatchInfo } from "../hooks/useMatchInfo";
-import { useOverallScore } from "@/hooks/useOverallScore.tsx";
+import { useOverallScore } from "@/hooks/useOverallScore";
+import { COURT_IDS, BRAND_COLORS } from "@/constants";
+import type { CourtData } from "@/types";
 
 const Index = () => {
-    const court1 = useCourtScore("court1");
-    const court2 = useCourtScore("court2");
+    const court1 = useCourtScore(COURT_IDS.COURT_1);
+    const court2 = useCourtScore(COURT_IDS.COURT_2);
     const { overallScoreA, overallScoreB, loading: loadingOverall } = useOverallScore();
     const { matchInfo, loading } = useMatchInfo();
 
-    if (
+    const isLoading =
         loading ||
         loadingOverall ||
         !matchInfo?.teamAName ||
@@ -21,57 +23,48 @@ const Index = () => {
         court1.loading ||
         court2.loading ||
         overallScoreA === null ||
-        overallScoreB === null
-    ) {
-        return (
-            <div className="min-h-screen bg-background text-foreground flex items-center justify-center text-2xl">
-                Načítám data...
-            </div>
-        );
+        overallScoreB === null;
+
+    if (isLoading) {
+        return <LoadingScreen />;
     }
 
     const teamAName = matchInfo.teamAName;
     const teamBName = matchInfo.teamBName;
 
-    const court1Data = {
+    const createCourtData = (
+        courtScore: typeof court1.score,
+        defaultServer: "home" | "away"
+    ): CourtData => ({
         homeTeam: {
             shortName: teamAName,
-            score: court1.score.teamA ?? 0,
-            sets: court1.score.setsA ?? 0,
+            score: courtScore.teamA ?? 0,
+            sets: courtScore.setsA ?? 0,
         },
         awayTeam: {
             shortName: teamBName,
-            score: court1.score.teamB ?? 0,
-            sets: court1.score.setsB ?? 0,
+            score: courtScore.teamB ?? 0,
+            sets: courtScore.setsB ?? 0,
         },
-        currentSet: court1.score.currentSet ?? 1,
-        server: court1.score.server ?? "home",
-        pastSets: court1.score.pastSets ?? [],
-    };
+        currentSet: courtScore.currentSet ?? 1,
+        server: courtScore.server ?? defaultServer,
+        pastSets: courtScore.pastSets ?? [],
+    });
 
-    const court2Data = {
-        homeTeam: {
-            shortName: teamAName,
-            score: court2.score.teamA ?? 0,
-            sets: court2.score.setsA ?? 0,
-        },
-        awayTeam: {
-            shortName: teamBName,
-            score: court2.score.teamB ?? 0,
-            sets: court2.score.setsB ?? 0,
-        },
-        currentSet: court2.score.currentSet ?? 1,
-        server: court2.score.server ?? "away",
-        pastSets: court2.score.pastSets ?? [],
-    };
+    const court1Data = createCourtData(court1.score, "home");
+    const court2Data = createCourtData(court2.score, "away");
 
     const totalScoreTeamA = overallScoreA;
     const totalScoreTeamB = overallScoreB;
 
     return (
-        <div className="w-full min-h-screen text-white flex flex-col" style={{ background: "linear-gradient(135deg, #004A90 0%, #E3161B 100%)" }}>
-
-        <div className="h-auto sm:h-16 flex items-center justify-center border-b-4 border-white/60" style={{ backgroundColor: "rgba(0, 74, 144, 0.95)" }}>
+        <div
+            className="w-full min-h-screen text-white flex flex-col bg-gradient-to-br from-brand-blue to-brand-red"
+        >
+            <div
+                className="h-auto sm:h-16 flex items-center justify-center border-b-4 border-white/60"
+                style={{ backgroundColor: BRAND_COLORS.BLUE_OVERLAY }}
+            >
                 <OverallMatch
                     data={{
                         title: matchInfo.title ?? "Turnaj",
@@ -84,7 +77,10 @@ const Index = () => {
                 />
             </div>
 
-            <div className="border-b-4 border-white/80 shadow-2xl" style={{ backgroundColor: "rgba(227, 22, 27, 0.95)" }}>
+            <div
+                className="border-b-4 border-white/80 shadow-2xl"
+                style={{ backgroundColor: BRAND_COLORS.RED_OVERLAY }}
+            >
                 <OverallScore
                     homeTeam={teamAName}
                     awayTeam={teamBName}
@@ -103,7 +99,10 @@ const Index = () => {
                 </div>
             </div>
 
-            <div className="h-auto sm:h-16 border-t-4 border-white/60" style={{ backgroundColor: "rgba(0, 74, 144, 0.95)" }}>
+            <div
+                className="h-auto sm:h-16 border-t-4 border-white/60"
+                style={{ backgroundColor: BRAND_COLORS.BLUE_OVERLAY }}
+            >
                 <SponsorArea />
             </div>
         </div>

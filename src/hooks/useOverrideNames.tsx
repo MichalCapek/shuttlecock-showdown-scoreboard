@@ -1,19 +1,28 @@
 import { useEffect, useState } from "react";
 import { doc, setDoc, onSnapshot, deleteDoc } from "firebase/firestore";
 import { db } from "../../firebaseConfig";
+import type { OverrideNames } from "@/types";
+import { FIRESTORE_COLLECTIONS, FIRESTORE_DOCS } from "@/constants";
+
+const DEFAULT_OVERRIDE_NAMES: OverrideNames = {
+    teamANameOverride: "",
+    teamBNameOverride: "",
+};
 
 export function useOverrideNames(courtId: string) {
-    const [overrideNames, setOverrideNamesState] = useState<{
-        teamANameOverride: string;
-        teamBNameOverride: string;
-    }>({ teamANameOverride: "", teamBNameOverride: "" });
-
+    const [overrideNames, setOverrideNamesState] = useState<OverrideNames>(DEFAULT_OVERRIDE_NAMES);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         if (!courtId) return;
 
-        const ref = doc(db, "courts", courtId, "overrideNames", "names");
+        const ref = doc(
+            db,
+            FIRESTORE_COLLECTIONS.COURTS,
+            courtId,
+            FIRESTORE_DOCS.OVERRIDE_NAMES,
+            FIRESTORE_DOCS.NAMES
+        );
 
         const unsubscribe = onSnapshot(ref, (snap) => {
             if (snap.exists()) {
@@ -23,10 +32,7 @@ export function useOverrideNames(courtId: string) {
                     teamBNameOverride: data.teamBNameOverride || "",
                 });
             } else {
-                setOverrideNamesState({
-                    teamANameOverride: "",
-                    teamBNameOverride: "",
-                });
+                setOverrideNamesState(DEFAULT_OVERRIDE_NAMES);
             }
             setLoading(false);
         });
@@ -38,15 +44,26 @@ export function useOverrideNames(courtId: string) {
         teamANameOverride: string,
         teamBNameOverride: string
     ) => {
-        const ref = doc(db, "courts", courtId, "overrideNames", "names");
+        const ref = doc(
+            db,
+            FIRESTORE_COLLECTIONS.COURTS,
+            courtId,
+            FIRESTORE_DOCS.OVERRIDE_NAMES,
+            FIRESTORE_DOCS.NAMES
+        );
         await setDoc(ref, { teamANameOverride, teamBNameOverride });
-        // `onSnapshot` se postará o aktualizaci lokálního stavu
     };
 
     const clearOverrideNames = async () => {
-        const ref = doc(db, "courts", courtId, "overrideNames", "names");
+        const ref = doc(
+            db,
+            FIRESTORE_COLLECTIONS.COURTS,
+            courtId,
+            FIRESTORE_DOCS.OVERRIDE_NAMES,
+            FIRESTORE_DOCS.NAMES
+        );
         await deleteDoc(ref);
-        setOverrideNamesState({ teamANameOverride: "", teamBNameOverride: "" });
+        setOverrideNamesState(DEFAULT_OVERRIDE_NAMES);
     };
 
     return { overrideNames, saveOverrideNames, clearOverrideNames, loading };

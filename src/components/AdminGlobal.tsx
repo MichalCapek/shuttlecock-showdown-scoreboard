@@ -2,37 +2,25 @@ import { useEffect, useState } from "react";
 import { doc, getDoc, setDoc, updateDoc, onSnapshot } from "firebase/firestore";
 import { db } from "../../firebaseConfig";
 import { useOverrideNames } from "../hooks/useOverrideNames";
+import { Button } from "@/components/ui/button";
+import type { CourtScore, MatchInfo } from "@/types";
+import { FIRESTORE_COLLECTIONS, FIRESTORE_DOCS, DEFAULT_COURT_SCORE, COURT_IDS } from "@/constants";
 
-interface MatchInfo {
-    teamAName: string;
-    teamBName: string;
-    title: string;
-    round: string;
+interface MatchInfoWithScore extends MatchInfo {
     overallScoreA: number;
     overallScoreB: number;
-    awayLogo: string;
-}
-
-interface CourtScore {
-    teamA: number;
-    teamB: number;
-    setsA: number;
-    setsB: number;
-    currentSet: number;
-    server: "home" | "away";
-    pastSets: { teamA: number; teamB: number }[];
 }
 
 export default function AdminGlobal() {
     const [passwordInput, setPasswordInput] = useState("");
     const [isAuthed, setIsAuthed] = useState(false);
-    const [globalData, setGlobalData] = useState<MatchInfo | null>(null);
+    const [globalData, setGlobalData] = useState<MatchInfoWithScore | null>(null);
     const [court1, setCourt1] = useState<CourtScore | null>(null);
     const [court2, setCourt2] = useState<CourtScore | null>(null);
     const [activeCourt, setActiveCourt] = useState<"court1" | "court2" | null>(null);
 
-    const { overrideNames: override1, saveOverrideNames: save1 } = useOverrideNames("court1");
-    const { overrideNames: override2, saveOverrideNames: save2 } = useOverrideNames("court2");
+    const { overrideNames: override1, saveOverrideNames: save1 } = useOverrideNames(COURT_IDS.COURT_1);
+    const { overrideNames: override2, saveOverrideNames: save2 } = useOverrideNames(COURT_IDS.COURT_2);
 
     const [tempOverride, setTempOverride] = useState({
         teamANameOverride: "",
@@ -40,7 +28,7 @@ export default function AdminGlobal() {
     });
 
     const handleLogin = async () => {
-        const ref = doc(db, "admin", "global");
+        const ref = doc(db, FIRESTORE_COLLECTIONS.ADMIN, FIRESTORE_DOCS.GLOBAL);
         const snap = await getDoc(ref);
         if (snap.exists() && snap.data().password === passwordInput) {
             setIsAuthed(true);
@@ -56,15 +44,24 @@ export default function AdminGlobal() {
     };
 
     useEffect(() => {
-        const unsubGlobal = onSnapshot(doc(db, "match", "global"), (snap) => {
-            if (snap.exists()) setGlobalData(snap.data() as MatchInfo);
-        });
-        const unsubCourt1 = onSnapshot(doc(db, "courts", "court1"), (snap) => {
-            if (snap.exists()) setCourt1(snap.data() as CourtScore);
-        });
-        const unsubCourt2 = onSnapshot(doc(db, "courts", "court2"), (snap) => {
-            if (snap.exists()) setCourt2(snap.data() as CourtScore);
-        });
+        const unsubGlobal = onSnapshot(
+            doc(db, FIRESTORE_COLLECTIONS.MATCH, FIRESTORE_DOCS.GLOBAL),
+            (snap) => {
+                if (snap.exists()) setGlobalData(snap.data() as MatchInfoWithScore);
+            }
+        );
+        const unsubCourt1 = onSnapshot(
+            doc(db, FIRESTORE_COLLECTIONS.COURTS, COURT_IDS.COURT_1),
+            (snap) => {
+                if (snap.exists()) setCourt1(snap.data() as CourtScore);
+            }
+        );
+        const unsubCourt2 = onSnapshot(
+            doc(db, FIRESTORE_COLLECTIONS.COURTS, COURT_IDS.COURT_2),
+            (snap) => {
+                if (snap.exists()) setCourt2(snap.data() as CourtScore);
+            }
+        );
 
         return () => {
             unsubGlobal();
@@ -80,7 +77,7 @@ export default function AdminGlobal() {
         }
 
         try {
-            await updateDoc(doc(db, "match", "global"), globalData);
+            await updateDoc(doc(db, FIRESTORE_COLLECTIONS.MATCH, FIRESTORE_DOCS.GLOBAL), globalData);
             alert("Uloženo");
         } catch (err) {
             console.error("Chyba při ukládání:", err);
@@ -88,7 +85,7 @@ export default function AdminGlobal() {
         }
     };
 
-    const handleInputChange = (key: keyof MatchInfo, value: string | number) => {
+    const handleInputChange = (key: keyof MatchInfoWithScore, value: string | number) => {
         setGlobalData((prev) => (prev ? { ...prev, [key]: value } : prev));
     };
 
@@ -96,18 +93,8 @@ export default function AdminGlobal() {
         const confirmed = confirm("Opravdu chcete resetovat oba kurty?");
         if (!confirmed) return;
 
-        const empty: CourtScore = {
-            teamA: 0,
-            teamB: 0,
-            setsA: 0,
-            setsB: 0,
-            currentSet: 1,
-            pastSets: [],
-            server: "home",
-        };
-
-        await setDoc(doc(db, "courts", "court1"), empty);
-        await setDoc(doc(db, "courts", "court2"), empty);
+        await setDoc(doc(db, FIRESTORE_COLLECTIONS.COURTS, COURT_IDS.COURT_1), DEFAULT_COURT_SCORE);
+        await setDoc(doc(db, FIRESTORE_COLLECTIONS.COURTS, COURT_IDS.COURT_2), DEFAULT_COURT_SCORE);
     };
 
     const openModal = (courtId: "court1" | "court2") => {
@@ -138,9 +125,9 @@ export default function AdminGlobal() {
                         placeholder="Zadejte heslo"
                         className="w-full px-4 py-2 border rounded"
                     />
-                    <button onClick={handleLogin} className="w-full bg-primary text-white py-2 rounded">
+                    <Button onClick={handleLogin} className="w-full">
                         Přihlásit
-                    </button>
+                    </Button>
                 </div>
             </div>
         );
@@ -219,9 +206,9 @@ export default function AdminGlobal() {
                             />
                         </div>
                     </div>
-                    <button onClick={handleSubmit} className="bg-primary text-white px-4 py-2 rounded">
+                    <Button onClick={handleSubmit}>
                         Uložit změny
-                    </button>
+                    </Button>
                 </div>
 
                 {/* PRAVÝ SLOUPEC – Oba kurty */}
@@ -232,18 +219,22 @@ export default function AdminGlobal() {
                                 <div className="flex justify-between items-center">
                                     <h3 className="font-semibold">{label}</h3>
                                     <div className="flex gap-3">
-                                        <button
+                                        <Button
+                                            variant="link"
+                                            size="sm"
                                             onClick={() => openModal(id as "court1" | "court2")}
-                                            className="text-sm underline text-blue-600"
+                                            className="text-blue-600 p-0 h-auto"
                                         >
                                             Přepsat jména
-                                        </button>
-                                        <button
+                                        </Button>
+                                        <Button
+                                            variant="link"
+                                            size="sm"
                                             onClick={() => handleClearOverrides(id as "court1" | "court2")}
-                                            className="text-sm underline text-red-600"
+                                            className="text-red-600 p-0 h-auto"
                                         >
                                             Vymazat přepis
-                                        </button>
+                                        </Button>
                                     </div>
                                 </div>
                                 {data ? (
@@ -271,12 +262,9 @@ export default function AdminGlobal() {
                             </div>
                         )
                     )}
-                    <button
-                        onClick={handleResetCourts}
-                        className="bg-red-600 text-white px-6 py-2 rounded hover:bg-red-700"
-                    >
+                    <Button variant="destructive" onClick={handleResetCourts}>
                         Reset obou kurtů
-                    </button>
+                    </Button>
                 </div>
             </div>
 
@@ -330,15 +318,12 @@ export default function AdminGlobal() {
                             </div>
                         </div>
                         <div className="flex justify-end space-x-2">
-                            <button onClick={() => setActiveCourt(null)} className="px-4 py-2 rounded border">
+                            <Button variant="outline" onClick={() => setActiveCourt(null)}>
                                 Zrušit
-                            </button>
-                            <button
-                                onClick={saveOverride}
-                                className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-                            >
+                            </Button>
+                            <Button onClick={saveOverride}>
                                 Uložit
-                            </button>
+                            </Button>
                         </div>
                     </div>
                 </div>

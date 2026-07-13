@@ -1,15 +1,14 @@
 import { useEffect, useState } from "react";
-import { doc, getDoc, getFirestore } from "firebase/firestore";
-import { app } from "../../firebaseConfig";
-
-const db = getFirestore(app);
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "../../firebaseConfig";
+import { FIRESTORE_COLLECTIONS } from "@/constants";
 
 export function useAdminAuth(courtId: string) {
     const [isAuthed, setIsAuthed] = useState(false);
     const [loading, setLoading] = useState(true);
 
     const checkPassword = async (enteredPassword: string) => {
-        const ref = doc(db, "admin", courtId);
+        const ref = doc(db, FIRESTORE_COLLECTIONS.ADMIN, courtId);
         const snapshot = await getDoc(ref);
         const data = snapshot.data();
         if (!data || !data.password) return false;

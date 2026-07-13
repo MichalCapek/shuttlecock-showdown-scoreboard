@@ -1,24 +1,21 @@
 import { useEffect, useState } from "react";
 import { doc, onSnapshot } from "firebase/firestore";
-import { db } from "../../firebaseConfig"; // ujisti se, že to odkazuje na správný Firestore instance
+import { db } from "../../firebaseConfig";
+import type { MatchInfo } from "@/types";
+import { FIRESTORE_COLLECTIONS, FIRESTORE_DOCS } from "@/constants";
 
-interface MatchInfo {
-    teamAName: string;
-    teamBName: string;
-    title: string;
-    round: string;
+interface MatchInfoWithScore extends MatchInfo {
     overallScoreA: number;
     overallScoreB: number;
-    awayLogo: string;
 }
 
 export const useMatchInfo = () => {
-    const [matchInfo, setMatchInfo] = useState<MatchInfo | null>(null);
+    const [matchInfo, setMatchInfo] = useState<MatchInfoWithScore | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-        const docRef = doc(db, "match", "global");
+        const docRef = doc(db, FIRESTORE_COLLECTIONS.MATCH, FIRESTORE_DOCS.GLOBAL);
 
         const unsubscribe = onSnapshot(
             docRef,

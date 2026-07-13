@@ -1,33 +1,19 @@
 import { useEffect, useState } from "react";
 import { doc, onSnapshot, updateDoc, setDoc } from "firebase/firestore";
 import { db } from "../../firebaseConfig";
+import type { CourtScore } from "@/types";
+import { DEFAULT_COURT_SCORE, FIRESTORE_COLLECTIONS } from "@/constants";
 
-export interface CourtScore {
-    teamA: number;
-    teamB: number;
-    setsA: number;
-    setsB: number;
-    currentSet: number;
-    server: "home" | "away";
-    pastSets: { teamA: number; teamB: number }[];
-}
+export type { CourtScore };
 
 export const useCourtScore = (courtId: string) => {
-    const [score, setScoreState] = useState<CourtScore>({
-        teamA: 0,
-        teamB: 0,
-        setsA: 0,
-        setsB: 0,
-        currentSet: 1,
-        server: "home",
-        pastSets: [],
-    });
+    const [score, setScoreState] = useState<CourtScore>(DEFAULT_COURT_SCORE);
 
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-        const docRef = doc(db, "courts", courtId);
+        const docRef = doc(db, FIRESTORE_COLLECTIONS.COURTS, courtId);
 
         const unsubscribe = onSnapshot(
             docRef,
@@ -62,7 +48,7 @@ export const useCourtScore = (courtId: string) => {
     }, [courtId]);
 
     const updateScore = async (team: "A" | "B", newScore: number) => {
-        const docRef = doc(db, "courts", courtId);
+        const docRef = doc(db, FIRESTORE_COLLECTIONS.COURTS, courtId);
 
         try {
             const updatePayload: Partial<CourtScore> = {};
@@ -87,7 +73,7 @@ export const useCourtScore = (courtId: string) => {
     };
 
     const endSet = async () => {
-        const docRef = doc(db, "courts", courtId);
+        const docRef = doc(db, FIRESTORE_COLLECTIONS.COURTS, courtId);
 
         const pastSets = [...score.pastSets, { teamA: score.teamA, teamB: score.teamB }];
         const setsA = score.teamA > score.teamB ? score.setsA + 1 : score.setsA;
@@ -110,7 +96,7 @@ export const useCourtScore = (courtId: string) => {
     };
 
     const setScore = async (newScore: CourtScore) => {
-        const docRef = doc(db, "courts", courtId);
+        const docRef = doc(db, FIRESTORE_COLLECTIONS.COURTS, courtId);
         try {
             await setDoc(docRef, newScore, { merge: true });
         } catch (err) {
@@ -119,17 +105,8 @@ export const useCourtScore = (courtId: string) => {
     };
 
     const resetMatch = async () => {
-        const docRef = doc(db, "courts", courtId);
-
-        const resetData: CourtScore = {
-            teamA: 0,
-            teamB: 0,
-            setsA: 0,
-            setsB: 0,
-            currentSet: 1,
-            server: "home",
-            pastSets: [],
-        };
+        const docRef = doc(db, FIRESTORE_COLLECTIONS.COURTS, courtId);
+        const resetData: CourtScore = { ...DEFAULT_COURT_SCORE };
 
         try {
             await setDoc(docRef, resetData, { merge: true });
@@ -139,7 +116,7 @@ export const useCourtScore = (courtId: string) => {
     };
 
     const toggleServer = async () => {
-        const docRef = doc(db, "courts", courtId);
+        const docRef = doc(db, FIRESTORE_COLLECTIONS.COURTS, courtId);
         const newServer: CourtScore["server"] = score.server === "home" ? "away" : "home";
 
         try {

@@ -1,10 +1,12 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { useCourtScore } from "../hooks/useCourtScore";
 import { useAdminAuth } from "../hooks/useAdminAuth";
 import { useMatchInfo } from "../hooks/useMatchInfo";
 import { motion, AnimatePresence } from "framer-motion";
-import {useOverrideNames} from "@/hooks/useOverrideNames.tsx";
+import { useOverrideNames } from "@/hooks/useOverrideNames";
+import { TeamBox } from "@/components/TeamBox";
+import { Button } from "@/components/ui/button";
 
 export default function AdminCourt() {
     const { courtId } = useParams();
@@ -52,51 +54,10 @@ export default function AdminCourt() {
         });
     };
 
-    const TeamBox = ({
-                         team,
-                         scoreValue,
-                         isServer,
-                         onIncrement,
-                         onDecrement,
-                     }: {
-        team: "A" | "B";
-        scoreValue: number;
-        isServer: boolean;
-        onIncrement: () => void;
-        onDecrement: () => void;
-    }) => {
-        const displayName =
-            team === "A"
-                ? overrideNames.teamANameOverride || matchInfo.teamAName
-                : overrideNames.teamBNameOverride || matchInfo.teamBName;
-
-        return (
-            <div className="flex flex-col items-center p-4 border border-border rounded-xl bg-card shadow-sm w-64">
-                <h2 className="font-semibold text-lg mb-2 flex items-center gap-2">{displayName}</h2>
-                <p className="text-4xl font-bold mb-4">{scoreValue}</p>
-                <div className="flex flex-col items-center gap-2">
-                    <button
-                        onClick={onIncrement}
-                        className="bg-primary text-white px-6 py-4 rounded-lg text-2xl font-bold hover:bg-primary/90 transition-all shadow-md"
-                    >
-                        +
-                    </button>
-                    <button
-                        onClick={onDecrement}
-                        className="bg-destructive text-white px-4 py-1 rounded text-sm hover:bg-destructive/90"
-                    >
-                        -
-                    </button>
-                </div>
-                <div className="flex gap-4 p-4">
-                    {isServer && (
-                        <span className="text-sm px-3 py-1 bg-yellow-400 text-black rounded-full shadow-md font-semibold flex items-center gap-1">
-                            🏸 Servis
-                        </span>
-                    )}
-                </div>
-            </div>
-        );
+    const getDisplayName = (team: "A" | "B") => {
+        return team === "A"
+            ? overrideNames.teamANameOverride || matchInfo.teamAName
+            : overrideNames.teamBNameOverride || matchInfo.teamBName;
     };
 
     if (!isAuthed) {
@@ -111,12 +72,9 @@ export default function AdminCourt() {
                         placeholder="Zadejte heslo"
                         className="w-full px-4 py-2 border border-border rounded bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
                     />
-                    <button
-                        onClick={handleLogin}
-                        className="w-full bg-primary text-white px-4 py-2 rounded hover:bg-primary/90 transition-colors"
-                    >
+                    <Button onClick={handleLogin} className="w-full">
                         Přihlásit
-                    </button>
+                    </Button>
                     {error && <p className="text-destructive text-sm text-center">{error}</p>}
                 </div>
             </div>
@@ -128,13 +86,13 @@ export default function AdminCourt() {
             <h1 className="text-3xl font-bold">Ovládání kurtu {courtId}</h1>
 
             <div className="flex flex-wrap gap-4">
-                <button
+                <Button
+                    variant="outline"
                     onClick={() => setIsSwapped((prev) => !prev)}
-                    className="bg-muted border border-border text-sm px-4 py-2 rounded hover:bg-muted/80 transition-colors"
                 >
                     Prohodit zobrazení týmů
-                </button>
-                <button
+                </Button>
+                <Button
                     onClick={() => {
                         setFormNames({
                             teamAName: overrideNames.teamANameOverride || "",
@@ -142,10 +100,10 @@ export default function AdminCourt() {
                         });
                         setShowModal(true);
                     }}
-                    className="bg-blue-500 text-white text-sm px-4 py-2 rounded hover:bg-blue-600 transition-colors"
+                    className="bg-blue-500 hover:bg-blue-600"
                 >
                     Upravit jména týmů
-                </button>
+                </Button>
             </div>
 
             <AnimatePresence mode="wait">
@@ -160,14 +118,14 @@ export default function AdminCourt() {
                     {isSwapped ? (
                         <>
                             <TeamBox
-                                team="B"
+                                displayName={getDisplayName("B")}
                                 scoreValue={score.teamB}
                                 isServer={score.server === "away"}
                                 onIncrement={() => updateScore("B", score.teamB + 1)}
                                 onDecrement={() => updateScore("B", Math.max(0, score.teamB - 1))}
                             />
                             <TeamBox
-                                team="A"
+                                displayName={getDisplayName("A")}
                                 scoreValue={score.teamA}
                                 isServer={score.server === "home"}
                                 onIncrement={() => updateScore("A", score.teamA + 1)}
@@ -177,14 +135,14 @@ export default function AdminCourt() {
                     ) : (
                         <>
                             <TeamBox
-                                team="A"
+                                displayName={getDisplayName("A")}
                                 scoreValue={score.teamA}
                                 isServer={score.server === "home"}
                                 onIncrement={() => updateScore("A", score.teamA + 1)}
                                 onDecrement={() => updateScore("A", Math.max(0, score.teamA - 1))}
                             />
                             <TeamBox
-                                team="B"
+                                displayName={getDisplayName("B")}
                                 scoreValue={score.teamB}
                                 isServer={score.server === "away"}
                                 onIncrement={() => updateScore("B", score.teamB + 1)}
@@ -195,31 +153,28 @@ export default function AdminCourt() {
                 </motion.div>
             </AnimatePresence>
 
-            <button
+            <Button
                 onClick={toggleServer}
-                className="bg-yellow-500 text-black px-4 py-2 rounded hover:bg-yellow-600 font-medium"
+                className="bg-yellow-500 text-black hover:bg-yellow-600 font-medium"
             >
                 Přepnout podávajícího
-            </button>
+            </Button>
 
             <div className="flex flex-wrap gap-4 mt-4">
-                <button
-                    onClick={handleEndSet}
-                    className="bg-muted text-foreground px-6 py-2 rounded-lg border border-border hover:bg-muted/80 transition-colors font-medium"
-                >
+                <Button variant="outline" onClick={handleEndSet}>
                     Konec setu
-                </button>
+                </Button>
 
-                <button
+                <Button
+                    variant="destructive"
                     onClick={() => {
                         if (window.confirm("Opravdu chcete vynulovat celý zápas?")) {
                             resetMatch();
                         }
                     }}
-                    className="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 transition-colors"
                 >
                     Resetovat zápas
-                </button>
+                </Button>
             </div>
 
             {score.pastSets && score.pastSets.length > 0 && (
@@ -255,29 +210,27 @@ export default function AdminCourt() {
                             onChange={(e) => setFormNames({ ...formNames, teamBName: e.target.value })}
                         />
                         <div className="flex justify-between items-center pt-2 gap-2 flex-wrap">
-                            <button
+                            <Button
+                                variant="destructive"
+                                size="sm"
                                 onClick={async () => {
                                     await clearOverrideNames();
                                     setFormNames({ teamAName: "", teamBName: "" });
                                     setShowModal(false);
                                 }}
-                                className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 text-sm"
                             >
                                 Vymazat jména
-                            </button>
+                            </Button>
                             <div className="flex gap-2 ml-auto">
-                                <button
+                                <Button
+                                    variant="outline"
                                     onClick={() => setShowModal(false)}
-                                    className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
                                 >
                                     Zrušit
-                                </button>
-                                <button
-                                    onClick={handleSaveOverrides}
-                                    className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-                                >
+                                </Button>
+                                <Button onClick={handleSaveOverrides}>
                                     Uložit
-                                </button>
+                                </Button>
                             </div>
                         </div>
                     </div>
