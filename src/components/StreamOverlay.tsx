@@ -115,16 +115,21 @@ body {
             </style>
 
 
-            <div className="fixed top-4 left-4 bg-background text-white rounded-xl px-6 py-3 shadow-xl z-50 font-bold text-lg scale-150 origin-top-left">
-                <div
-                    className="grid gap-y-2 items-center"
-                    style={{
-                        gridTemplateColumns: `minmax(${nameColumnWidth}px, auto) repeat(${totalSets.length}, minmax(28px, auto)) 20px`,
-                        gap: "0.75rem",
-                    }}
-                >
-                    {renderRow(matchInfo.teamAName, setScoresA, score.server === "home", prevScores.teamA)}
-                    {renderRow(matchInfo.teamBName, setScoresB, score.server === "away", prevScores.teamB)}
+            <div className="fixed top-4 left-4 z-50 scale-150 origin-top-left w-fit">
+                <div className="relative z-10 bg-background text-white px-6 py-3 rounded-xl shadow-xl font-bold text-lg">
+                    <div
+                        className="grid gap-y-2 items-center"
+                        style={{
+                            gridTemplateColumns: `minmax(${nameColumnWidth}px, auto) repeat(${totalSets.length}, minmax(28px, auto)) 20px`,
+                            gap: "0.75rem",
+                        }}
+                    >
+                        {renderRow(matchInfo.teamAName, setScoresA, score.server === "home", prevScores.teamA)}
+                        {renderRow(matchInfo.teamBName, setScoresB, score.server === "away", prevScores.teamB)}
+                    </div>
+                </div>
+                <div className="relative z-0 -mt-3 pt-4 pb-2 px-4 rounded-b-xl bg-blue-900 text-white text-left text-base font-semibold shadow-lg w-fit whitespace-nowrap">
+                    Skóre utkání: {matchInfo.overallScoreA}:{matchInfo.overallScoreB}
                 </div>
             </div>
         </>
