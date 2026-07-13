@@ -183,7 +183,7 @@ export default function AdminCourt() {
     };
 
     const actionBar = (
-        <div className="flex items-stretch gap-1 px-2 pt-2 pb-[max(0.5rem,env(safe-area-inset-bottom))]">
+        <div className="flex items-stretch gap-1 pt-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] lg:gap-2">
             <ActionButton
                 onClick={swapSides}
                 icon={ArrowLeftRight}
@@ -221,25 +221,27 @@ export default function AdminCourt() {
                 setsA={score.setsA}
                 setsB={score.setsB}
                 tracker={
-                    <>
-                        <CourtTrackerPanel
-                            tracker={tracker}
-                            scoreServer={score.server}
-                            scoreA={score.teamA}
-                            scoreB={score.teamB}
-                            teamAName={getTeamName("A")}
-                            teamBName={getTeamName("B")}
-                            getDisplayName={getTrackerDisplayName}
-                            getSinglesNameForSide={getSinglesNameForSide}
-                            onSetGameMode={setGameMode}
-                            onSwapPartnersOnSide={swapPartnersOnSide}
-                            onSavePlayers={handleSavePlayers}
-                            onSyncServerFromScore={handleSyncServerFromScore}
-                            onSyncServerPosition={syncServerPosition}
-                            onToggleServer={handleToggleServer}
-                        />
-                        <div className="mx-2 mt-5 shrink-0 border-t border-border/50 pt-3 sm:mx-3">
-                            <div className="flex w-full justify-center gap-2">
+                    <div className="flex flex-col lg:grid lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)] lg:items-start lg:gap-x-6 lg:px-6 xl:grid-cols-[minmax(0,3fr)_minmax(18rem,1fr)] xl:gap-x-8 xl:px-8">
+                        <div className="min-w-0 lg:col-start-1 lg:row-start-1">
+                            <CourtTrackerPanel
+                                tracker={tracker}
+                                scoreServer={score.server}
+                                scoreA={score.teamA}
+                                scoreB={score.teamB}
+                                teamAName={getTeamName("A")}
+                                teamBName={getTeamName("B")}
+                                getDisplayName={getTrackerDisplayName}
+                                getSinglesNameForSide={getSinglesNameForSide}
+                                onSetGameMode={setGameMode}
+                                onSwapPartnersOnSide={swapPartnersOnSide}
+                                onSavePlayers={handleSavePlayers}
+                                onSyncServerFromScore={handleSyncServerFromScore}
+                                onSyncServerPosition={syncServerPosition}
+                                onToggleServer={handleToggleServer}
+                            />
+                        </div>
+                        <div className="mx-2 mt-5 shrink-0 border-t border-border/50 pt-3 sm:mx-3 lg:col-start-1 lg:row-start-2 lg:mx-0">
+                            <div className="flex w-full justify-center gap-2 lg:mx-auto lg:max-w-2xl lg:gap-4">
                                 {isHomeOnLeft ? (
                                     <>
                                         <TeamBox {...teamAProps} />
@@ -253,15 +255,19 @@ export default function AdminCourt() {
                                 )}
                             </div>
                         </div>
-                        <CourtTimerPanel />
-                        <PastSetsMiniBar
-                            teamAName={getTeamName("A")}
-                            teamBName={getTeamName("B")}
-                            pastSets={score.pastSets ?? []}
-                            currentTeamA={score.teamA}
-                            currentTeamB={score.teamB}
-                        />
-                    </>
+                        <div className="min-w-0 lg:col-start-2 lg:row-start-1">
+                            <CourtTimerPanel />
+                        </div>
+                        <div className="min-w-0 lg:col-start-2 lg:row-start-2">
+                            <PastSetsMiniBar
+                                teamAName={getTeamName("A")}
+                                teamBName={getTeamName("B")}
+                                pastSets={score.pastSets ?? []}
+                                currentTeamA={score.teamA}
+                                currentTeamB={score.teamB}
+                            />
+                        </div>
+                    </div>
                 }
                 actionBar={actionBar}
             />

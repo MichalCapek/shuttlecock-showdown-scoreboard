@@ -84,36 +84,45 @@ export function useCourtTracker(courtId: string) {
 
     const setServerSlot = (serverSlot: PlayerSlot) => save({ serverSlot });
 
-    const swapSides = () => {
-        const newTeamASide: CourtSide = tracker.teamASide === "left" ? "right" : "left";
-        const slotMap: Record<PlayerSlot, PlayerSlot> = {
-            leftTop: "rightTop",
-            leftBottom: "rightBottom",
-            rightTop: "leftTop",
-            rightBottom: "leftBottom",
-        };
-        save({
-            leftTop: tracker.rightTop,
-            leftBottom: tracker.rightBottom,
-            rightTop: tracker.leftTop,
-            rightBottom: tracker.leftBottom,
-            teamASide: newTeamASide,
-            serverSlot: slotMap[tracker.serverSlot],
+    const swapSides = useCallback(() => {
+        setTracker((prev) => {
+            const newTeamASide: CourtSide = prev.teamASide === "left" ? "right" : "left";
+            const slotMap: Record<PlayerSlot, PlayerSlot> = {
+                leftTop: "rightTop",
+                leftBottom: "rightBottom",
+                rightTop: "leftTop",
+                rightBottom: "leftBottom",
+            };
+            const next = {
+                ...prev,
+                leftTop: prev.rightTop,
+                leftBottom: prev.rightBottom,
+                rightTop: prev.leftTop,
+                rightBottom: prev.leftBottom,
+                teamASide: newTeamASide,
+                serverSlot: slotMap[prev.serverSlot],
+            };
+            persistTracker(courtId, next);
+            return next;
         });
-    };
+    }, [courtId]);
 
-    const swapPartnersOnSide = (side: CourtSide) => {
-        const swapped = swapPartnerNamesOnSide(
-            {
-                leftTop: tracker.leftTop,
-                leftBottom: tracker.leftBottom,
-                rightTop: tracker.rightTop,
-                rightBottom: tracker.rightBottom,
-            },
-            side
-        );
-        save(swapped);
-    };
+    const swapPartnersOnSide = useCallback((side: CourtSide) => {
+        setTracker((prev) => {
+            const swapped = swapPartnerNamesOnSide(
+                {
+                    leftTop: prev.leftTop,
+                    leftBottom: prev.leftBottom,
+                    rightTop: prev.rightTop,
+                    rightBottom: prev.rightBottom,
+                },
+                side
+            );
+            const next = { ...prev, ...swapped };
+            persistTracker(courtId, next);
+            return next;
+        });
+    }, [courtId]);
 
     const setServerForTeam = (team: "A" | "B", scoreA: number, scoreB: number) => {
         const slot = firstSlotForTeam(team, tracker.teamASide, tracker.gameMode, scoreA, scoreB);

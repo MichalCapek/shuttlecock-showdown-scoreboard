@@ -25,7 +25,7 @@ export function PastSetsMiniBar({
     ];
 
     return (
-        <div className="mx-2 mb-1.5 mt-5 shrink-0 border-t border-border/50 pt-3 sm:mx-3">
+        <div className="mx-2 mb-1.5 mt-5 shrink-0 border-t border-border/50 pt-3 sm:mx-3 lg:mx-0 lg:mt-4">
             <span className="mb-1 block text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
                 Přehled setů
             </span>

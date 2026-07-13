@@ -20,7 +20,7 @@ export function CourtTimerPanel() {
     const isInterval = mode === "interval";
 
     return (
-        <div className="mx-2 mb-1.5 mt-5 shrink-0 border-t border-border/50 pt-3 sm:mx-3">
+        <div className="mx-2 mb-1.5 mt-5 shrink-0 border-t border-border/50 pt-3 sm:mx-3 lg:mx-0 lg:mt-0 lg:border-t-0 lg:pt-0">
             <div className="mb-1 flex items-center justify-between gap-1">
                 <span className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
                     Časovač

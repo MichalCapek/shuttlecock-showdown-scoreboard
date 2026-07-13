@@ -75,38 +75,39 @@ export function CourtControlShell({
         exact ? location.pathname === href : location.pathname === href;
 
     return (
-        <div className="court-control flex h-dvh max-h-dvh flex-col overflow-hidden bg-slate-50 text-foreground">
-            <header className="flex shrink-0 items-center justify-between gap-2 border-b border-border/60 bg-white px-2 py-1 sm:px-3">
-                <div className="flex items-center gap-2">
-                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-brand-blue to-brand-red p-1">
-                        <img src={shuttlecock} alt="" className="h-full w-full object-contain brightness-0 invert" />
+        <div className="court-control min-h-dvh bg-slate-50 lg:bg-slate-100">
+            <div className="mx-auto flex h-dvh max-h-dvh w-full flex-col overflow-hidden bg-slate-50 md:max-w-md md:border-x md:border-border/60 md:shadow-lg lg:max-w-none lg:border-x-0 lg:shadow-none">
+                <header className="flex shrink-0 items-center justify-between gap-2 border-b border-border/60 bg-white px-2 py-1 sm:px-3 lg:px-6 xl:px-8">
+                    <div className="flex items-center gap-2">
+                        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-brand-blue to-brand-red p-1">
+                            <img src={shuttlecock} alt="" className="h-full w-full object-contain brightness-0 invert" />
+                        </div>
+                        <div className="flex items-center gap-1.5 text-xs font-semibold">
+                            <span className="rounded-md bg-muted px-2 py-1">Set {currentSet}</span>
+                            <span className="tabular-nums text-muted-foreground">
+                                {setsA}–{setsB}
+                            </span>
+                        </div>
                     </div>
-                    <div className="flex items-center gap-1.5 text-xs font-semibold">
-                        <span className="rounded-md bg-muted px-2 py-1">Set {currentSet}</span>
-                        <span className="tabular-nums text-muted-foreground">
-                            {setsA}–{setsB}
-                        </span>
-                    </div>
-                </div>
 
-                <nav className="flex shrink-0 items-center gap-0.5">
-                    {navItems.map(({ href, label, icon, exact }) => (
+                    <nav className="flex shrink-0 items-center gap-0.5">
+                        {navItems.map(({ href, label, icon, exact }) => (
+                            <NavButton
+                                key={href}
+                                href={href}
+                                label={label}
+                                icon={icon}
+                                active={isActive(href, exact)}
+                            />
+                        ))}
                         <NavButton
-                            key={href}
-                            href={href}
-                            label={label}
-                            icon={icon}
-                            active={isActive(href, exact)}
+                            href="/"
+                            label="Náhled"
+                            icon={ExternalLink}
+                            external
                         />
-                    ))}
-                    <NavButton
-                        href="/"
-                        label="Náhled"
-                        icon={ExternalLink}
-                        external
-                    />
-                </nav>
-            </header>
+                    </nav>
+                </header>
 
             {tracker}
 
@@ -118,8 +119,9 @@ export function CourtControlShell({
                 <div className="min-h-0 flex-1" />
             )}
 
-            <div className="court-control-actions shrink-0 border-t border-border/60 bg-white">
+            <div className="court-control-actions shrink-0 border-t border-border/60 bg-white px-2 lg:px-6 xl:px-8">
                 {actionBar}
+            </div>
             </div>
         </div>
     );

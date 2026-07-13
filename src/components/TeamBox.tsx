@@ -37,7 +37,7 @@ export const TeamBox = ({
         return (
             <div
                 className={cn(
-                    "flex w-[46%] max-w-[10.5rem] flex-col rounded-xl border-2 p-2 sm:max-w-[11.5rem]",
+                    "flex w-[46%] max-w-[10.5rem] flex-col rounded-xl border-2 p-2 sm:max-w-[11.5rem] lg:w-auto lg:min-w-[12rem] lg:max-w-[14rem] lg:flex-1",
                     accentStyles,
                     isServer && "ring-2 ring-amber-400/70 ring-offset-1"
                 )}

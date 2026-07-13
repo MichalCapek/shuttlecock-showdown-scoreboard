@@ -11,6 +11,7 @@ import {
 } from "@/lib/courtTrackerRules";
 import shuttlecock from "../../../assets/shuttlecock.png";
 import { CourtTrackerEditDialog } from "./CourtTrackerEditDialog";
+import { BadmintonCourtLines } from "./BadmintonCourtLines";
 
 interface CourtTrackerPanelProps {
     tracker: CourtTrackerState;
@@ -43,16 +44,16 @@ function PlayerChip({
             type="button"
             onClick={onClick}
             className={cn(
-                "flex max-w-[4.5rem] items-center gap-1 rounded-md border bg-white/95 px-1.5 py-1 text-left shadow-sm transition-all active:scale-95 sm:max-w-[5.5rem]",
+                "pointer-events-auto inline-flex w-max items-start gap-0.5 rounded-md border bg-white/95 px-1 py-0.5 text-left shadow-sm transition-all active:scale-95",
                 isServer
                     ? "border-amber-400 ring-2 ring-amber-400/60"
                     : "border-white/80 hover:bg-white"
             )}
         >
             {isServer && (
-                <img src={shuttlecock} alt="" className="h-3 w-3 shrink-0 object-contain" />
+                <img src={shuttlecock} alt="" className="mt-px h-2.5 w-2.5 shrink-0 object-contain" />
             )}
-            <span className="truncate text-[10px] font-semibold leading-tight sm:text-[11px]">
+            <span className="whitespace-normal break-words text-[9px] font-semibold leading-tight sm:text-[10px]">
                 {name}
             </span>
         </button>
@@ -63,14 +64,17 @@ function PartnerSwapButton({ onClick, className }: { onClick: () => void; classN
     return (
         <button
             type="button"
-            onClick={onClick}
+            onClick={(e) => {
+                e.stopPropagation();
+                onClick();
+            }}
             className={cn(
-                "z-30 flex h-6 w-6 items-center justify-center rounded-full border border-white/80 bg-white/90 text-emerald-800 shadow-sm transition-transform active:scale-95",
+                "pointer-events-auto relative z-50 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-white/80 bg-white/95 text-emerald-800 shadow-sm transition-transform active:scale-95",
                 className
             )}
             aria-label="Prohodit partnery na této straně"
         >
-            <ArrowUpDown className="h-3 w-3" />
+            <ArrowUpDown className="h-2.5 w-2.5" />
         </button>
     );
 }
@@ -119,7 +123,7 @@ export function CourtTrackerPanel({
     const doublesSlots: PlayerSlot[] = ["leftTop", "leftBottom", "rightTop", "rightBottom"];
 
     return (
-        <div className="mx-2 mt-1.5 shrink-0 sm:mx-3">
+        <div className="mx-2 mt-1.5 shrink-0 sm:mx-3 lg:mx-0">
             <div className="mb-1.5 flex items-center justify-between gap-1">
                 <span className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
                     Sledování kurtu
@@ -152,16 +156,10 @@ export function CourtTrackerPanel({
                 </div>
             </div>
 
-            <div className="relative mx-auto aspect-[2.4/1] w-full max-h-[7.5rem] overflow-hidden rounded-lg border-2 border-emerald-800/40 bg-emerald-600 shadow-inner sm:max-h-[9rem]">
-                <div className="absolute inset-[4%] rounded border border-white/50" />
-                <div className="absolute inset-y-[4%] left-1/2 w-px -translate-x-px bg-white/80" />
-                <div className="absolute inset-x-[4%] top-1/2 h-px -translate-y-px bg-white/35" />
-                <div className="absolute left-[4%] right-1/2 top-[30%] h-px bg-white/20" />
-                <div className="absolute left-[4%] right-1/2 bottom-[30%] h-px bg-white/20" />
-                <div className="absolute left-1/2 right-[4%] top-[30%] h-px bg-white/20" />
-                <div className="absolute left-1/2 right-[4%] bottom-[30%] h-px bg-white/20" />
+            <div className="relative mx-auto aspect-[134/61] w-full max-h-[7.5rem] overflow-hidden rounded-lg border-2 border-emerald-900/50 bg-gradient-to-b from-emerald-500 to-emerald-700 shadow-inner sm:max-h-[9rem] lg:max-h-none">
+                <BadmintonCourtLines isSingles={isSingles} />
 
-                <div className="absolute left-1/2 top-1/2 z-10 -translate-x-1/2 -translate-y-1/2 rounded bg-white/90 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-emerald-800">
+                <div className="absolute left-1/2 top-1/2 z-10 -translate-x-1/2 -translate-y-1/2 rounded bg-white/90 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-emerald-800 shadow-sm">
                     Síť
                 </div>
 
@@ -202,8 +200,19 @@ export function CourtTrackerPanel({
                     </>
                 ) : (
                     <>
+                        <PartnerSwapButton
+                            onClick={() => onSwapPartnersOnSide("left")}
+                            className="absolute left-1/4 top-1/2 -translate-x-1/2 -translate-y-1/2"
+                        />
+                        <PartnerSwapButton
+                            onClick={() => onSwapPartnersOnSide("right")}
+                            className="absolute left-3/4 top-1/2 -translate-x-1/2 -translate-y-1/2"
+                        />
                         {doublesSlots.map((slot) => (
-                            <div key={slot} className={cn("absolute z-20", SLOT_POSITIONS[slot])}>
+                            <div
+                                key={slot}
+                                className={cn("pointer-events-none absolute z-20", SLOT_POSITIONS[slot])}
+                            >
                                 <PlayerChip
                                     name={getDisplayName(slot)}
                                     isServer={tracker.serverSlot === slot}
@@ -211,14 +220,6 @@ export function CourtTrackerPanel({
                                 />
                             </div>
                         ))}
-                        <PartnerSwapButton
-                            onClick={() => onSwapPartnersOnSide("left")}
-                            className="absolute left-[12%] top-1/2 -translate-x-1/2 -translate-y-1/2"
-                        />
-                        <PartnerSwapButton
-                            onClick={() => onSwapPartnersOnSide("right")}
-                            className="absolute right-[12%] top-1/2 translate-x-1/2 -translate-y-1/2"
-                        />
                     </>
                 )}
             </div>

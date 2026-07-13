@@ -145,10 +145,10 @@ export function advanceDoublesServe(
 }
 
 export const SLOT_POSITIONS: Record<PlayerSlot, string> = {
-    leftTop: "left-[12%] top-[14%]",
-    leftBottom: "left-[12%] bottom-[14%]",
-    rightTop: "right-[12%] top-[14%]",
-    rightBottom: "right-[12%] bottom-[14%]",
+    leftTop: "left-[10%] top-[20%]",
+    leftBottom: "left-[10%] bottom-[20%]",
+    rightTop: "right-[10%] top-[20%]",
+    rightBottom: "right-[10%] bottom-[20%]",
 };
 
 export const SLOT_PLACEHOLDERS: Record<PlayerSlot, string> = {
