@@ -1,10 +1,27 @@
 import { useEffect, useState } from "react";
 import { doc, getDoc, setDoc, updateDoc, onSnapshot } from "firebase/firestore";
+import { Save, RotateCcw } from "lucide-react";
+import { toast } from "sonner";
 import { db } from "../../firebaseConfig";
 import { useOverrideNames } from "../hooks/useOverrideNames";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
 import type { CourtScore, MatchInfo } from "@/types";
 import { FIRESTORE_COLLECTIONS, FIRESTORE_DOCS, DEFAULT_COURT_SCORE, COURT_IDS } from "@/constants";
+import { AdminLayout } from "@/components/admin/AdminLayout";
+import { AdminLogin } from "@/components/admin/AdminLogin";
+import { CourtSummaryCard } from "@/components/admin/CourtSummaryCard";
+import { TeamNameOverrideDialog } from "@/components/admin/TeamNameOverrideDialog";
+import { ConfirmDialog } from "@/components/admin/ConfirmDialog";
 
 interface MatchInfoWithScore extends MatchInfo {
     overallScoreA: number;
@@ -12,12 +29,13 @@ interface MatchInfoWithScore extends MatchInfo {
 }
 
 export default function AdminGlobal() {
-    const [passwordInput, setPasswordInput] = useState("");
     const [isAuthed, setIsAuthed] = useState(false);
     const [globalData, setGlobalData] = useState<MatchInfoWithScore | null>(null);
     const [court1, setCourt1] = useState<CourtScore | null>(null);
     const [court2, setCourt2] = useState<CourtScore | null>(null);
     const [activeCourt, setActiveCourt] = useState<"court1" | "court2" | null>(null);
+    const [showResetConfirm, setShowResetConfirm] = useState(false);
+    const [saving, setSaving] = useState(false);
 
     const { overrideNames: override1, saveOverrideNames: save1 } = useOverrideNames(COURT_IDS.COURT_1);
     const { overrideNames: override2, saveOverrideNames: save2 } = useOverrideNames(COURT_IDS.COURT_2);
@@ -27,20 +45,14 @@ export default function AdminGlobal() {
         teamBNameOverride: "",
     });
 
-    const handleLogin = async () => {
+    const handleLogin = async (password: string) => {
         const ref = doc(db, FIRESTORE_COLLECTIONS.ADMIN, FIRESTORE_DOCS.GLOBAL);
         const snap = await getDoc(ref);
-        if (snap.exists() && snap.data().password === passwordInput) {
+        if (snap.exists() && snap.data().password === password) {
             setIsAuthed(true);
-        } else {
-            alert("Nesprávné heslo");
+            return true;
         }
-    };
-
-    const handleClearOverrides = async (courtId: "court1" | "court2") => {
-        const fn = courtId === "court1" ? save1 : save2;
-        await fn("", "");
-        alert(`Přepsaná jména na ${courtId} byla vymazána.`);
+        return false;
     };
 
     useEffect(() => {
@@ -72,16 +84,19 @@ export default function AdminGlobal() {
 
     const handleSubmit = async () => {
         if (!globalData) {
-            alert("Data nejsou připravena");
+            toast.error("Data nejsou připravena");
             return;
         }
 
+        setSaving(true);
         try {
-            await updateDoc(doc(db, FIRESTORE_COLLECTIONS.MATCH, FIRESTORE_DOCS.GLOBAL), globalData);
-            alert("Uloženo");
+            await updateDoc(doc(db, FIRESTORE_COLLECTIONS.MATCH, FIRESTORE_DOCS.GLOBAL), { ...globalData });
+            toast.success("Změny uloženy");
         } catch (err) {
             console.error("Chyba při ukládání:", err);
-            alert("Nastala chyba při ukládání.");
+            toast.error("Nastala chyba při ukládání");
+        } finally {
+            setSaving(false);
         }
     };
 
@@ -90,11 +105,16 @@ export default function AdminGlobal() {
     };
 
     const handleResetCourts = async () => {
-        const confirmed = confirm("Opravdu chcete resetovat oba kurty?");
-        if (!confirmed) return;
-
         await setDoc(doc(db, FIRESTORE_COLLECTIONS.COURTS, COURT_IDS.COURT_1), DEFAULT_COURT_SCORE);
         await setDoc(doc(db, FIRESTORE_COLLECTIONS.COURTS, COURT_IDS.COURT_2), DEFAULT_COURT_SCORE);
+        setShowResetConfirm(false);
+        toast.success("Oba kurty byly resetovány");
+    };
+
+    const handleClearOverrides = async (courtId: "court1" | "court2") => {
+        const fn = courtId === "court1" ? save1 : save2;
+        await fn("", "");
+        toast.success(`Přepsaná jména na ${courtId === "court1" ? "Kurtu 1" : "Kurtu 2"} byla vymazána`);
     };
 
     const openModal = (courtId: "court1" | "court2") => {
@@ -111,223 +131,204 @@ export default function AdminGlobal() {
         const fn = activeCourt === "court1" ? save1 : save2;
         await fn(tempOverride.teamANameOverride, tempOverride.teamBNameOverride);
         setActiveCourt(null);
+        toast.success("Jména uložena");
     };
 
     if (!isAuthed) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-background text-foreground">
-                <div className="bg-card border p-6 rounded-lg w-full max-w-md space-y-4">
-                    <h2 className="text-xl font-semibold text-center">Admin – Global</h2>
-                    <input
-                        type="password"
-                        value={passwordInput}
-                        onChange={(e) => setPasswordInput(e.target.value)}
-                        placeholder="Zadejte heslo"
-                        className="w-full px-4 py-2 border rounded"
-                    />
-                    <Button onClick={handleLogin} className="w-full">
-                        Přihlásit
-                    </Button>
-                </div>
-            </div>
+            <AdminLogin
+                title="Globální administrace"
+                description="Správa turnaje, týmů a celkového skóre"
+                onLogin={handleLogin}
+            />
         );
     }
 
+    const getTeamName = (court: "court1" | "court2", team: "A" | "B") => {
+        const overrides = court === "court1" ? override1 : override2;
+        const override = team === "A" ? overrides.teamANameOverride : overrides.teamBNameOverride;
+        const defaultName = team === "A" ? globalData?.teamAName : globalData?.teamBName;
+        return override || defaultName || "—";
+    };
+
     return (
-        <div className="min-h-screen bg-background text-foreground p-6 space-y-8">
-            <h1 className="text-2xl font-bold">Globální správa utkání</h1>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* LEVÝ SLOUPEC – Globální nastavení */}
-                <div className="bg-card border p-4 rounded-lg space-y-4">
-                    <h2 className="text-xl font-semibold mb-2">Nastavení zápasu</h2>
-                    {/* Formulář pro globální data... (nezměněno) */}
-                    <div>
-                        <label className="block font-semibold">Název turnaje</label>
-                        <input
-                            value={globalData?.title || ""}
-                            onChange={(e) => handleInputChange("title", e.target.value)}
-                            className="w-full border px-4 py-2 rounded"
-                        />
-                    </div>
-                    <div>
-                        <label className="block font-semibold">Kolo</label>
-                        <input
-                            value={globalData?.round || ""}
-                            onChange={(e) => handleInputChange("round", e.target.value)}
-                            className="w-full border px-4 py-2 rounded"
-                        />
-                    </div>
-                    <div>
-                        <label className="block font-semibold">Tým A</label>
-                        <input
-                            value={globalData?.teamAName || ""}
-                            onChange={(e) => handleInputChange("teamAName", e.target.value)}
-                            className="w-full border px-4 py-2 rounded"
-                        />
-                    </div>
-                    <div>
-                        <label className="block font-semibold">Tým B</label>
-                        <input
-                            value={globalData?.teamBName || ""}
-                            onChange={(e) => handleInputChange("teamBName", e.target.value)}
-                            className="w-full border px-4 py-2 rounded"
-                        />
-                    </div>
-                    <div>
-                        <label className="block font-semibold">Logo B (název souboru)</label>
-                        <input
-                            value={globalData?.awayLogo || ""}
-                            onChange={(e) => handleInputChange("awayLogo", e.target.value)}
-                            className="w-full border px-4 py-2 rounded"
-                        />
-                    </div>
-                    <div className="grid grid-cols-2 gap-4">
-                        <div>
-                            <label className="block font-semibold">Skóre A</label>
-                            <input
-                                type="number"
-                                value={globalData?.overallScoreA ?? 0}
-                                onChange={(e) =>
-                                    handleInputChange("overallScoreA", parseInt(e.target.value) || 0)
-                                }
-                                className="w-full border px-4 py-2 rounded"
-                            />
-                        </div>
-                        <div>
-                            <label className="block font-semibold">Skóre B</label>
-                            <input
-                                type="number"
-                                value={globalData?.overallScoreB ?? 0}
-                                onChange={(e) =>
-                                    handleInputChange("overallScoreB", parseInt(e.target.value) || 0)
-                                }
-                                className="w-full border px-4 py-2 rounded"
-                            />
-                        </div>
-                    </div>
-                    <Button onClick={handleSubmit}>
-                        Uložit změny
-                    </Button>
-                </div>
-
-                {/* PRAVÝ SLOUPEC – Oba kurty */}
-                <div className="space-y-6">
-                    {[{ label: "Kurt 1", data: court1, id: "court1" }, { label: "Kurt 2", data: court2, id: "court2" }].map(
-                        ({ label, data, id }) => (
-                            <div key={id} className="bg-card border p-4 rounded-lg space-y-2">
-                                <div className="flex justify-between items-center">
-                                    <h3 className="font-semibold">{label}</h3>
-                                    <div className="flex gap-3">
-                                        <Button
-                                            variant="link"
-                                            size="sm"
-                                            onClick={() => openModal(id as "court1" | "court2")}
-                                            className="text-blue-600 p-0 h-auto"
-                                        >
-                                            Přepsat jména
-                                        </Button>
-                                        <Button
-                                            variant="link"
-                                            size="sm"
-                                            onClick={() => handleClearOverrides(id as "court1" | "court2")}
-                                            className="text-red-600 p-0 h-auto"
-                                        >
-                                            Vymazat přepis
-                                        </Button>
-                                    </div>
-                                </div>
-                                {data ? (
-                                    <>
-                                        <p>
-                                            <span className="font-semibold">Tým A:</span>{" "}
-                                            {(id === "court1" ? override1.teamANameOverride : override2.teamANameOverride) || globalData?.teamAName || "—"} — skóre: {data.teamA}, sety: {data.setsA}
-                                        </p>
-                                        <p>
-                                            <span className="font-semibold">Tým B:</span>{" "}
-                                            {(id === "court1" ? override1.teamBNameOverride : override2.teamBNameOverride) || globalData?.teamBName || "—"} — skóre: {data.teamB}, sety: {data.setsB}
-                                        </p>
-                                        <p>Aktuální set: {data.currentSet}</p>
-                                        <p>Servis: {data.server}</p>
-                                        {data.pastSets?.length > 0 && (
-                                            <div className="mt-2">
-                                                <p className="font-semibold">Odehrané sety:</p>
-                                                <p>{data.pastSets.map((s) => `${s.teamA}:${s.teamB}`).join(", ")}</p>
-                                            </div>
-                                        )}
-                                    </>
-                                ) : (
-                                    <p>Načítám...</p>
-                                )}
+        <AdminLayout
+            title="Globální správa utkání"
+            description="Nastavení turnaje, celkového skóre a přehled kurtů"
+        >
+            <div className="grid gap-6 lg:grid-cols-2">
+                {/* Match settings */}
+                <Card>
+                    <CardHeader>
+                        <CardTitle>Nastavení zápasu</CardTitle>
+                        <CardDescription>
+                            Informace zobrazené na scoreboardu
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-6">
+                        <fieldset className="space-y-4">
+                            <legend className="text-sm font-semibold text-muted-foreground">
+                                Turnaj
+                            </legend>
+                            <div className="space-y-2">
+                                <Label htmlFor="title">Název turnaje</Label>
+                                <Input
+                                    id="title"
+                                    value={globalData?.title || ""}
+                                    onChange={(e) => handleInputChange("title", e.target.value)}
+                                />
                             </div>
-                        )
-                    )}
-                    <Button variant="destructive" onClick={handleResetCourts}>
-                        Reset obou kurtů
-                    </Button>
+                            <div className="space-y-2">
+                                <Label htmlFor="round">Kolo</Label>
+                                <Input
+                                    id="round"
+                                    value={globalData?.round || ""}
+                                    onChange={(e) => handleInputChange("round", e.target.value)}
+                                />
+                            </div>
+                        </fieldset>
+
+                        <Separator />
+
+                        <fieldset className="space-y-4">
+                            <legend className="text-sm font-semibold text-muted-foreground">
+                                Týmy
+                            </legend>
+                            <div className="space-y-2">
+                                <Label htmlFor="teamA">Tým A (domácí)</Label>
+                                <Input
+                                    id="teamA"
+                                    value={globalData?.teamAName || ""}
+                                    onChange={(e) => handleInputChange("teamAName", e.target.value)}
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="teamB">Tým B (hosté)</Label>
+                                <Input
+                                    id="teamB"
+                                    value={globalData?.teamBName || ""}
+                                    onChange={(e) => handleInputChange("teamBName", e.target.value)}
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="awayLogo">Logo B (název souboru)</Label>
+                                <Input
+                                    id="awayLogo"
+                                    value={globalData?.awayLogo || ""}
+                                    onChange={(e) => handleInputChange("awayLogo", e.target.value)}
+                                    placeholder="např. team-b.png"
+                                />
+                            </div>
+                        </fieldset>
+
+                        <Separator />
+
+                        <fieldset className="space-y-4">
+                            <legend className="text-sm font-semibold text-muted-foreground">
+                                Celkové skóre utkání
+                            </legend>
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                    <Label htmlFor="overallA">Skóre A</Label>
+                                    <Input
+                                        id="overallA"
+                                        type="number"
+                                        min={0}
+                                        value={globalData?.overallScoreA ?? 0}
+                                        onChange={(e) =>
+                                            handleInputChange("overallScoreA", parseInt(e.target.value) || 0)
+                                        }
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label htmlFor="overallB">Skóre B</Label>
+                                    <Input
+                                        id="overallB"
+                                        type="number"
+                                        min={0}
+                                        value={globalData?.overallScoreB ?? 0}
+                                        onChange={(e) =>
+                                            handleInputChange("overallScoreB", parseInt(e.target.value) || 0)
+                                        }
+                                    />
+                                </div>
+                            </div>
+                        </fieldset>
+
+                        <Button
+                            onClick={handleSubmit}
+                            disabled={saving}
+                            className="w-full gap-2 bg-brand-blue hover:bg-brand-blue/90"
+                        >
+                            <Save className="h-4 w-4" />
+                            {saving ? "Ukládám…" : "Uložit změny"}
+                        </Button>
+                    </CardContent>
+                </Card>
+
+                {/* Courts overview */}
+                <div className="space-y-4">
+                    <CourtSummaryCard
+                        courtId={COURT_IDS.COURT_1}
+                        label="Kurt 1"
+                        data={court1}
+                        teamAName={getTeamName("court1", "A")}
+                        teamBName={getTeamName("court1", "B")}
+                        onEditNames={() => openModal("court1")}
+                        onClearOverrides={() => handleClearOverrides("court1")}
+                    />
+                    <CourtSummaryCard
+                        courtId={COURT_IDS.COURT_2}
+                        label="Kurt 2"
+                        data={court2}
+                        teamAName={getTeamName("court2", "A")}
+                        teamBName={getTeamName("court2", "B")}
+                        onEditNames={() => openModal("court2")}
+                        onClearOverrides={() => handleClearOverrides("court2")}
+                    />
+
+                    <Card className="border-destructive/30">
+                        <CardHeader className="pb-3">
+                            <CardTitle className="text-base text-destructive">Nebezpečná zóna</CardTitle>
+                            <CardDescription>
+                                Resetuje skóre, sety a historii na obou kurtách
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <Button
+                                variant="destructive"
+                                onClick={() => setShowResetConfirm(true)}
+                                className="gap-2"
+                            >
+                                <RotateCcw className="h-4 w-4" />
+                                Reset obou kurtů
+                            </Button>
+                        </CardContent>
+                    </Card>
                 </div>
             </div>
 
-            {/* MODÁLNÍ OKNO */}
-            {activeCourt && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                    <div className="bg-white p-6 rounded shadow-lg w-full max-w-md space-y-4 text-black">
-                        <h3 className="text-xl font-bold">Přepsání jmen pro {activeCourt}</h3>
-                        <div>
-                            <label className="block font-semibold mb-1">Tým A</label>
-                            <div className="relative">
-                                <input
-                                    className="w-full border px-4 py-2 pr-10 rounded"
-                                    value={tempOverride.teamANameOverride}
-                                    onChange={(e) =>
-                                        setTempOverride((prev) => ({ ...prev, teamANameOverride: e.target.value }))
-                                    }
-                                />
-                                {tempOverride.teamANameOverride && (
-                                    <button
-                                        className="absolute right-2 top-2 text-gray-500 hover:text-black"
-                                        onClick={() =>
-                                            setTempOverride((prev) => ({ ...prev, teamANameOverride: "" }))
-                                        }
-                                    >
-                                        ✕
-                                    </button>
-                                )}
-                            </div>
-                        </div>
-                        <div>
-                            <label className="block font-semibold mb-1">Tým B</label>
-                            <div className="relative">
-                                <input
-                                    className="w-full border px-4 py-2 pr-10 rounded"
-                                    value={tempOverride.teamBNameOverride}
-                                    onChange={(e) =>
-                                        setTempOverride((prev) => ({ ...prev, teamBNameOverride: e.target.value }))
-                                    }
-                                />
-                                {tempOverride.teamBNameOverride && (
-                                    <button
-                                        className="absolute right-2 top-2 text-gray-500 hover:text-black"
-                                        onClick={() =>
-                                            setTempOverride((prev) => ({ ...prev, teamBNameOverride: "" }))
-                                        }
-                                    >
-                                        ✕
-                                    </button>
-                                )}
-                            </div>
-                        </div>
-                        <div className="flex justify-end space-x-2">
-                            <Button variant="outline" onClick={() => setActiveCourt(null)}>
-                                Zrušit
-                            </Button>
-                            <Button onClick={saveOverride}>
-                                Uložit
-                            </Button>
-                        </div>
-                    </div>
-                </div>
-            )}
-        </div>
+            <TeamNameOverrideDialog
+                open={activeCourt !== null}
+                onOpenChange={(open) => !open && setActiveCourt(null)}
+                title={`Přepsání jmen – ${activeCourt === "court1" ? "Kurt 1" : activeCourt === "court2" ? "Kurt 2" : ""}`}
+                description="Přepsaná jména se zobrazí pouze na vybraném kurtu"
+                teamAName={tempOverride.teamANameOverride}
+                teamBName={tempOverride.teamBNameOverride}
+                onTeamAChange={(v) => setTempOverride((p) => ({ ...p, teamANameOverride: v }))}
+                onTeamBChange={(v) => setTempOverride((p) => ({ ...p, teamBNameOverride: v }))}
+                onSave={saveOverride}
+            />
+
+            <ConfirmDialog
+                open={showResetConfirm}
+                onOpenChange={setShowResetConfirm}
+                title="Resetovat oba kurty?"
+                description="Tato akce vynuluje skóre, sety i historii na obou kurtách. Nelze ji vrátit zpět."
+                confirmLabel="Resetovat oba kurty"
+                destructive
+                onConfirm={handleResetCourts}
+            />
+        </AdminLayout>
     );
 }

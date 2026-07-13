@@ -112,3 +112,16 @@ body.transparent-overlay {
 body.transparent-overlay #root {
   background-color: transparent !important;
 }
+
+/* Court umpire control – lock to viewport, no scroll */
+.court-control {
+  touch-action: manipulation;
+  overscroll-behavior: none;
+}
+
+html:has(.court-control),
+html:has(.court-control) body,
+html:has(.court-control) #root {
+  overflow: hidden;
+  height: 100%;
+}
