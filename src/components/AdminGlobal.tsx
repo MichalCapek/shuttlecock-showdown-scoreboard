@@ -1,9 +1,12 @@
 import { useEffect, useState } from "react";
-import { doc, getDoc, setDoc, updateDoc, onSnapshot } from "firebase/firestore";
+import { doc, updateDoc } from "firebase/firestore";
 import { Save, RotateCcw } from "lucide-react";
 import { toast } from "sonner";
-import { db } from "../../firebaseConfig";
-import { useOverrideNames } from "../hooks/useOverrideNames";
+import { db } from "@/lib/firebase";
+import { useCourtScore } from "@/hooks/useCourtScore";
+import { useMatchInfo } from "@/hooks/useMatchInfo";
+import { useGlobalAdminAuth } from "@/hooks/useAdminAuth";
+import { useOverrideNames } from "@/hooks/useOverrideNames";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -15,82 +18,58 @@ import {
     CardTitle,
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import type { CourtScore, MatchInfo } from "@/types";
-import { FIRESTORE_COLLECTIONS, FIRESTORE_DOCS, DEFAULT_COURT_SCORE, COURT_IDS } from "@/constants";
+import type { MatchInfoWithOverallScore } from "@/types";
+import type { CourtId } from "@/lib/courts";
+import { FIRESTORE_COLLECTIONS, FIRESTORE_DOCS, COURT_IDS } from "@/constants";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { AdminLogin } from "@/components/admin/AdminLogin";
 import { CourtSummaryCard } from "@/components/admin/CourtSummaryCard";
 import { TeamNameOverrideDialog } from "@/components/admin/TeamNameOverrideDialog";
 import { ConfirmDialog } from "@/components/admin/ConfirmDialog";
-
-interface MatchInfoWithScore extends MatchInfo {
-    overallScoreA: number;
-    overallScoreB: number;
-}
+import { LoadingScreen } from "@/components/LoadingScreen";
+import { resolveTeamName } from "@/lib/scoreboard";
 
 export default function AdminGlobal() {
-    const [isAuthed, setIsAuthed] = useState(false);
-    const [globalData, setGlobalData] = useState<MatchInfoWithScore | null>(null);
-    const [court1, setCourt1] = useState<CourtScore | null>(null);
-    const [court2, setCourt2] = useState<CourtScore | null>(null);
-    const [activeCourt, setActiveCourt] = useState<"court1" | "court2" | null>(null);
+    const { isAuthed, checkPassword } = useGlobalAdminAuth();
+    const { matchInfo, loading: matchLoading } = useMatchInfo();
+    const court1 = useCourtScore(COURT_IDS.COURT_1);
+    const court2 = useCourtScore(COURT_IDS.COURT_2);
+    const { overrideNames: override1, saveOverrideNames: save1, clearOverrideNames: clear1 } =
+        useOverrideNames(COURT_IDS.COURT_1);
+    const { overrideNames: override2, saveOverrideNames: save2, clearOverrideNames: clear2 } =
+        useOverrideNames(COURT_IDS.COURT_2);
+
+    const [draft, setDraft] = useState<MatchInfoWithOverallScore | null>(null);
+    const [isDirty, setIsDirty] = useState(false);
+    const [activeCourt, setActiveCourt] = useState<CourtId | null>(null);
     const [showResetConfirm, setShowResetConfirm] = useState(false);
     const [saving, setSaving] = useState(false);
-
-    const { overrideNames: override1, saveOverrideNames: save1 } = useOverrideNames(COURT_IDS.COURT_1);
-    const { overrideNames: override2, saveOverrideNames: save2 } = useOverrideNames(COURT_IDS.COURT_2);
-
     const [tempOverride, setTempOverride] = useState({
         teamANameOverride: "",
         teamBNameOverride: "",
     });
 
-    const handleLogin = async (password: string) => {
-        const ref = doc(db, FIRESTORE_COLLECTIONS.ADMIN, FIRESTORE_DOCS.GLOBAL);
-        const snap = await getDoc(ref);
-        if (snap.exists() && snap.data().password === password) {
-            setIsAuthed(true);
-            return true;
+    useEffect(() => {
+        if (matchInfo && !isDirty) {
+            setDraft(matchInfo);
         }
-        return false;
+    }, [matchInfo, isDirty]);
+
+    const handleInputChange = (key: keyof MatchInfoWithOverallScore, value: string | number) => {
+        setIsDirty(true);
+        setDraft((prev) => (prev ? { ...prev, [key]: value } : prev));
     };
 
-    useEffect(() => {
-        const unsubGlobal = onSnapshot(
-            doc(db, FIRESTORE_COLLECTIONS.MATCH, FIRESTORE_DOCS.GLOBAL),
-            (snap) => {
-                if (snap.exists()) setGlobalData(snap.data() as MatchInfoWithScore);
-            }
-        );
-        const unsubCourt1 = onSnapshot(
-            doc(db, FIRESTORE_COLLECTIONS.COURTS, COURT_IDS.COURT_1),
-            (snap) => {
-                if (snap.exists()) setCourt1(snap.data() as CourtScore);
-            }
-        );
-        const unsubCourt2 = onSnapshot(
-            doc(db, FIRESTORE_COLLECTIONS.COURTS, COURT_IDS.COURT_2),
-            (snap) => {
-                if (snap.exists()) setCourt2(snap.data() as CourtScore);
-            }
-        );
-
-        return () => {
-            unsubGlobal();
-            unsubCourt1();
-            unsubCourt2();
-        };
-    }, []);
-
     const handleSubmit = async () => {
-        if (!globalData) {
+        if (!draft) {
             toast.error("Data nejsou připravena");
             return;
         }
 
         setSaving(true);
         try {
-            await updateDoc(doc(db, FIRESTORE_COLLECTIONS.MATCH, FIRESTORE_DOCS.GLOBAL), { ...globalData });
+            await updateDoc(doc(db, FIRESTORE_COLLECTIONS.MATCH, FIRESTORE_DOCS.GLOBAL), { ...draft });
+            setIsDirty(false);
             toast.success("Změny uloženy");
         } catch (err) {
             console.error("Chyba při ukládání:", err);
@@ -100,25 +79,29 @@ export default function AdminGlobal() {
         }
     };
 
-    const handleInputChange = (key: keyof MatchInfoWithScore, value: string | number) => {
-        setGlobalData((prev) => (prev ? { ...prev, [key]: value } : prev));
-    };
-
     const handleResetCourts = async () => {
-        await setDoc(doc(db, FIRESTORE_COLLECTIONS.COURTS, COURT_IDS.COURT_1), DEFAULT_COURT_SCORE);
-        await setDoc(doc(db, FIRESTORE_COLLECTIONS.COURTS, COURT_IDS.COURT_2), DEFAULT_COURT_SCORE);
+        const ok1 = await court1.resetMatch();
+        const ok2 = await court2.resetMatch();
         setShowResetConfirm(false);
+        if (!ok1 || !ok2) {
+            toast.error("Nepodařilo se resetovat jeden nebo oba kurty");
+            return;
+        }
         toast.success("Oba kurty byly resetovány");
     };
 
-    const handleClearOverrides = async (courtId: "court1" | "court2") => {
-        const fn = courtId === "court1" ? save1 : save2;
-        await fn("", "");
-        toast.success(`Přepsaná jména na ${courtId === "court1" ? "Kurtu 1" : "Kurtu 2"} byla vymazána`);
+    const handleClearOverrides = async (courtId: CourtId) => {
+        const fn = courtId === COURT_IDS.COURT_1 ? clear1 : clear2;
+        const ok = await fn();
+        if (!ok) {
+            toast.error("Nepodařilo se vymazat přepsaná jména");
+            return;
+        }
+        toast.success(`Přepsaná jména na ${courtId === COURT_IDS.COURT_1 ? "Kurtu 1" : "Kurtu 2"} byla vymazána`);
     };
 
-    const openModal = (courtId: "court1" | "court2") => {
-        const data = courtId === "court1" ? override1 : override2;
+    const openModal = (courtId: CourtId) => {
+        const data = courtId === COURT_IDS.COURT_1 ? override1 : override2;
         setTempOverride({
             teamANameOverride: data.teamANameOverride || "",
             teamBNameOverride: data.teamBNameOverride || "",
@@ -128,10 +111,20 @@ export default function AdminGlobal() {
 
     const saveOverride = async () => {
         if (!activeCourt) return;
-        const fn = activeCourt === "court1" ? save1 : save2;
-        await fn(tempOverride.teamANameOverride, tempOverride.teamBNameOverride);
+        const fn = activeCourt === COURT_IDS.COURT_1 ? save1 : save2;
+        const ok = await fn(tempOverride.teamANameOverride, tempOverride.teamBNameOverride);
+        if (!ok) {
+            toast.error("Nepodařilo se uložit jména");
+            return;
+        }
         setActiveCourt(null);
         toast.success("Jména uložena");
+    };
+
+    const getTeamName = (courtId: CourtId, team: "A" | "B") => {
+        if (!draft) return "—";
+        const overrides = courtId === COURT_IDS.COURT_1 ? override1 : override2;
+        return resolveTeamName(team, draft, overrides);
     };
 
     if (!isAuthed) {
@@ -139,17 +132,14 @@ export default function AdminGlobal() {
             <AdminLogin
                 title="Globální administrace"
                 description="Správa turnaje, týmů a celkového skóre"
-                onLogin={handleLogin}
+                onLogin={checkPassword}
             />
         );
     }
 
-    const getTeamName = (court: "court1" | "court2", team: "A" | "B") => {
-        const overrides = court === "court1" ? override1 : override2;
-        const override = team === "A" ? overrides.teamANameOverride : overrides.teamBNameOverride;
-        const defaultName = team === "A" ? globalData?.teamAName : globalData?.teamBName;
-        return override || defaultName || "—";
-    };
+    if (matchLoading || !draft) {
+        return <LoadingScreen />;
+    }
 
     return (
         <AdminLayout
@@ -157,7 +147,6 @@ export default function AdminGlobal() {
             description="Nastavení turnaje, celkového skóre a přehled kurtů"
         >
             <div className="grid gap-6 lg:grid-cols-2">
-                {/* Match settings */}
                 <Card>
                     <CardHeader>
                         <CardTitle>Nastavení zápasu</CardTitle>
@@ -174,7 +163,7 @@ export default function AdminGlobal() {
                                 <Label htmlFor="title">Název turnaje</Label>
                                 <Input
                                     id="title"
-                                    value={globalData?.title || ""}
+                                    value={draft.title}
                                     onChange={(e) => handleInputChange("title", e.target.value)}
                                 />
                             </div>
@@ -182,7 +171,7 @@ export default function AdminGlobal() {
                                 <Label htmlFor="round">Kolo</Label>
                                 <Input
                                     id="round"
-                                    value={globalData?.round || ""}
+                                    value={draft.round}
                                     onChange={(e) => handleInputChange("round", e.target.value)}
                                 />
                             </div>
@@ -198,7 +187,7 @@ export default function AdminGlobal() {
                                 <Label htmlFor="teamA">Tým A (domácí)</Label>
                                 <Input
                                     id="teamA"
-                                    value={globalData?.teamAName || ""}
+                                    value={draft.teamAName}
                                     onChange={(e) => handleInputChange("teamAName", e.target.value)}
                                 />
                             </div>
@@ -206,7 +195,7 @@ export default function AdminGlobal() {
                                 <Label htmlFor="teamB">Tým B (hosté)</Label>
                                 <Input
                                     id="teamB"
-                                    value={globalData?.teamBName || ""}
+                                    value={draft.teamBName}
                                     onChange={(e) => handleInputChange("teamBName", e.target.value)}
                                 />
                             </div>
@@ -214,7 +203,7 @@ export default function AdminGlobal() {
                                 <Label htmlFor="awayLogo">Logo B (název souboru)</Label>
                                 <Input
                                     id="awayLogo"
-                                    value={globalData?.awayLogo || ""}
+                                    value={draft.awayLogo || ""}
                                     onChange={(e) => handleInputChange("awayLogo", e.target.value)}
                                     placeholder="např. team-b.png"
                                 />
@@ -234,7 +223,7 @@ export default function AdminGlobal() {
                                         id="overallA"
                                         type="number"
                                         min={0}
-                                        value={globalData?.overallScoreA ?? 0}
+                                        value={draft.overallScoreA}
                                         onChange={(e) =>
                                             handleInputChange("overallScoreA", parseInt(e.target.value) || 0)
                                         }
@@ -246,7 +235,7 @@ export default function AdminGlobal() {
                                         id="overallB"
                                         type="number"
                                         min={0}
-                                        value={globalData?.overallScoreB ?? 0}
+                                        value={draft.overallScoreB}
                                         onChange={(e) =>
                                             handleInputChange("overallScoreB", parseInt(e.target.value) || 0)
                                         }
@@ -266,25 +255,24 @@ export default function AdminGlobal() {
                     </CardContent>
                 </Card>
 
-                {/* Courts overview */}
                 <div className="space-y-4">
                     <CourtSummaryCard
                         courtId={COURT_IDS.COURT_1}
                         label="Kurt 1"
-                        data={court1}
-                        teamAName={getTeamName("court1", "A")}
-                        teamBName={getTeamName("court1", "B")}
-                        onEditNames={() => openModal("court1")}
-                        onClearOverrides={() => handleClearOverrides("court1")}
+                        data={court1.score}
+                        teamAName={getTeamName(COURT_IDS.COURT_1, "A")}
+                        teamBName={getTeamName(COURT_IDS.COURT_1, "B")}
+                        onEditNames={() => openModal(COURT_IDS.COURT_1)}
+                        onClearOverrides={() => handleClearOverrides(COURT_IDS.COURT_1)}
                     />
                     <CourtSummaryCard
                         courtId={COURT_IDS.COURT_2}
                         label="Kurt 2"
-                        data={court2}
-                        teamAName={getTeamName("court2", "A")}
-                        teamBName={getTeamName("court2", "B")}
-                        onEditNames={() => openModal("court2")}
-                        onClearOverrides={() => handleClearOverrides("court2")}
+                        data={court2.score}
+                        teamAName={getTeamName(COURT_IDS.COURT_2, "A")}
+                        teamBName={getTeamName(COURT_IDS.COURT_2, "B")}
+                        onEditNames={() => openModal(COURT_IDS.COURT_2)}
+                        onClearOverrides={() => handleClearOverrides(COURT_IDS.COURT_2)}
                     />
 
                     <Card className="border-destructive/30">
@@ -311,8 +299,8 @@ export default function AdminGlobal() {
             <TeamNameOverrideDialog
                 open={activeCourt !== null}
                 onOpenChange={(open) => !open && setActiveCourt(null)}
-                title={`Přepsání jmen – ${activeCourt === "court1" ? "Kurt 1" : activeCourt === "court2" ? "Kurt 2" : ""}`}
-                description="Přepsaná jména se zobrazí pouze na vybraném kurtu"
+                title={`Přepsání jmen – ${activeCourt === COURT_IDS.COURT_1 ? "Kurt 1" : activeCourt === COURT_IDS.COURT_2 ? "Kurt 2" : ""}`}
+                description="Přepsaná jména se zobrazí na vybraném kurtu na scoreboardu, streamu i court view"
                 teamAName={tempOverride.teamANameOverride}
                 teamBName={tempOverride.teamBNameOverride}
                 onTeamAChange={(v) => setTempOverride((p) => ({ ...p, teamANameOverride: v }))}

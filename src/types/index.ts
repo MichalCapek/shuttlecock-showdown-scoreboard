@@ -21,6 +21,11 @@ export interface MatchInfo {
     awayLogo?: string;
 }
 
+export interface MatchInfoWithOverallScore extends MatchInfo {
+    overallScoreA: number;
+    overallScoreB: number;
+}
+
 export interface OverrideNames {
     teamANameOverride: string;
     teamBNameOverride: string;
@@ -38,15 +43,6 @@ export interface CourtData {
     currentSet: number;
     server: "home" | "away";
     pastSets?: PastSet[];
-}
-
-export interface OverallMatchData {
-    title: string;
-    round: string;
-    homeTeam: string;
-    awayTeam: string;
-    homeScore: number;
-    awayScore: number;
 }
 
 export type GameMode = "singles" | "doubles";

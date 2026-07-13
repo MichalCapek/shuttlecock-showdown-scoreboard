@@ -1,28 +1,26 @@
 import { cn } from "@/lib/utils";
-import type { PastSet } from "@/types";
+import type { CourtScore } from "@/types";
+import { getSetHistory } from "@/lib/scoreboard";
 
 interface PastSetsMiniBarProps {
     teamAName: string;
     teamBName: string;
-    pastSets: PastSet[];
-    currentTeamA: number;
-    currentTeamB: number;
+    score: Pick<CourtScore, "pastSets" | "teamA" | "teamB">;
 }
 
 export function PastSetsMiniBar({
     teamAName,
     teamBName,
-    pastSets,
-    currentTeamA,
-    currentTeamB,
+    score,
 }: PastSetsMiniBarProps) {
-    const hasCurrentScore = currentTeamA > 0 || currentTeamB > 0;
-    if (pastSets.length === 0 && !hasCurrentScore) return null;
+    const hasCurrentScore = score.teamA > 0 || score.teamB > 0;
+    if (score.pastSets.length === 0 && !hasCurrentScore) return null;
 
-    const columns = [
-        ...pastSets.map((set) => ({ ...set, isCurrent: false })),
-        { teamA: currentTeamA, teamB: currentTeamB, isCurrent: true },
-    ];
+    const setHistory = getSetHistory(score);
+    const columns = setHistory.map((set, index) => ({
+        ...set,
+        isCurrent: index === setHistory.length - 1,
+    }));
 
     return (
         <div className="mx-2 mb-1.5 mt-5 shrink-0 border-t border-border/50 pt-3 sm:mx-3 lg:mx-0 lg:mt-4">

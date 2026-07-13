@@ -1,7 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
-import { LayoutDashboard, Settings, ExternalLink } from "lucide-react";
+import { ExternalLink } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { COURT_IDS } from "@/constants";
+import { ADMIN_NAV_ITEMS } from "@/constants/adminNav";
 import shuttlecock from "../../../assets/shuttlecock.png";
 
 interface CourtControlShellProps {
@@ -13,11 +13,7 @@ interface CourtControlShellProps {
     children?: React.ReactNode;
 }
 
-const navItems = [
-    { href: "/admin", label: "Globál", icon: Settings, exact: true },
-    { href: `/admin/${COURT_IDS.COURT_1}`, label: "Kurt 1", icon: LayoutDashboard, exact: false },
-    { href: `/admin/${COURT_IDS.COURT_2}`, label: "Kurt 2", icon: LayoutDashboard, exact: false },
-];
+const navItems = ADMIN_NAV_ITEMS;
 
 function NavButton({
     href,

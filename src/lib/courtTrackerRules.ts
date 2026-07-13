@@ -18,6 +18,14 @@ export function sideForSlot(slot: PlayerSlot): CourtSide {
     return slot.startsWith("left") ? "left" : "right";
 }
 
+export function teamForSide(side: CourtSide, teamASide: CourtSide): "A" | "B" {
+    return side === teamASide ? "A" : "B";
+}
+
+export function teamForSlot(slot: PlayerSlot, teamASide: CourtSide): "A" | "B" {
+    return teamForSide(sideForSlot(slot), teamASide);
+}
+
 export function partnerSlot(slot: PlayerSlot): PlayerSlot {
     const map: Record<PlayerSlot, PlayerSlot> = {
         leftTop: "leftBottom",

@@ -3,7 +3,7 @@ import { ArrowUpDown, Pencil, RefreshCw, Users, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import type { CourtSide, CourtTrackerState, GameMode, PlayerSlot } from "@/types";
-import { teamForSlot } from "@/hooks/useCourtTracker";
+import { teamForSlot } from "@/lib/courtTrackerRules";
 import {
     getSinglesPositions,
     SLOT_POSITIONS,

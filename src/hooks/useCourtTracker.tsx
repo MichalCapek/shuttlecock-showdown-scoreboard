@@ -44,18 +44,6 @@ function persistTracker(courtId: string, state: CourtTrackerState) {
     localStorage.setItem(STORAGE_KEY(courtId), JSON.stringify(state));
 }
 
-export function sideForSlot(slot: PlayerSlot): CourtSide {
-    return slot.startsWith("left") ? "left" : "right";
-}
-
-export function teamForSide(side: CourtSide, teamASide: CourtSide): "A" | "B" {
-    return side === teamASide ? "A" : "B";
-}
-
-export function teamForSlot(slot: PlayerSlot, teamASide: CourtSide): "A" | "B" {
-    return teamForSide(sideForSlot(slot), teamASide);
-}
-
 export { SLOT_PLACEHOLDERS };
 
 export function useCourtTracker(courtId: string) {

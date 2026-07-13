@@ -1,16 +1,12 @@
 import { useEffect, useState } from "react";
 import { doc, onSnapshot } from "firebase/firestore";
-import { db } from "../../firebaseConfig";
-import type { MatchInfo } from "@/types";
+import { db } from "@/lib/firebase";
+import type { MatchInfoWithOverallScore } from "@/types";
 import { FIRESTORE_COLLECTIONS, FIRESTORE_DOCS } from "@/constants";
+import { parseMatchDoc } from "@/lib/match";
 
-interface MatchInfoWithScore extends MatchInfo {
-    overallScoreA: number;
-    overallScoreB: number;
-}
-
-export const useMatchInfo = () => {
-    const [matchInfo, setMatchInfo] = useState<MatchInfoWithScore | null>(null);
+export function useMatchInfo() {
+    const [matchInfo, setMatchInfo] = useState<MatchInfoWithOverallScore | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
@@ -21,17 +17,7 @@ export const useMatchInfo = () => {
             docRef,
             (docSnap) => {
                 if (docSnap.exists()) {
-                    const data = docSnap.data();
-
-                    setMatchInfo({
-                        teamAName: data.teamAName ?? "Tým A",
-                        teamBName: data.teamBName ?? "Tým B",
-                        title: data.title ?? "Zápas",
-                        round: data.round ?? "",
-                        overallScoreA: data.overallScoreA ?? 0,
-                        overallScoreB: data.overallScoreB ?? 0,
-                        awayLogo: data.awayLogo ?? "https://via.placeholder.com/150",
-                    });
+                    setMatchInfo(parseMatchDoc(docSnap.data()));
                     setError(null);
                 } else {
                     setError("Dokument /match/global neexistuje.");
@@ -49,4 +35,4 @@ export const useMatchInfo = () => {
     }, []);
 
     return { matchInfo, loading, error };
-};
+}

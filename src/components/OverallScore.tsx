@@ -1,10 +1,19 @@
+import { useEffect, useState } from "react";
 import homeTeamLogo from "../../assets/BkBenatky_logo.png";
 
-const logos = import.meta.glob("../../assets/*.*", {
-    eager: true,
+const awayLogoModules = import.meta.glob<string>("../../assets/*.{png,gif,jpg,jpeg,webp}", {
     query: "?url",
     import: "default",
 });
+
+async function loadAwayLogo(fileName: string): Promise<string> {
+    const path = `../../assets/${fileName}`;
+    const loader = awayLogoModules[path];
+    if (loader) return loader();
+
+    const fallback = awayLogoModules["../../assets/BkBenatky_logo.png"];
+    return fallback ? fallback() : homeTeamLogo;
+}
 
 interface OverallScoreProps {
     homeTeam: string;
@@ -13,11 +22,6 @@ interface OverallScoreProps {
     awayScore: number;
     awayLogoFileName: string;
 }
-
-const resolveAwayLogo = (fileName: string) => {
-    const awayLogoPath = `../../assets/${fileName}`;
-    return logos[awayLogoPath] ?? logos["../../assets/default.png"];
-};
 
 const TeamLogo = ({ src, alt }: { src: string; alt: string }) => (
     <div className="flex h-14 w-14 items-center justify-center rounded-full bg-white p-2 shadow-lg sm:h-40 sm:w-40 sm:p-3">
@@ -32,7 +36,17 @@ const OverallScore = ({
     awayScore,
     awayLogoFileName,
 }: OverallScoreProps) => {
-    const awayLogoUrl = resolveAwayLogo(awayLogoFileName);
+    const [awayLogoUrl, setAwayLogoUrl] = useState(homeTeamLogo);
+
+    useEffect(() => {
+        let cancelled = false;
+        loadAwayLogo(awayLogoFileName).then((url) => {
+            if (!cancelled) setAwayLogoUrl(url);
+        });
+        return () => {
+            cancelled = true;
+        };
+    }, [awayLogoFileName]);
 
     return (
         <div className="w-full px-6 py-4 sm:px-4 sm:py-6">
