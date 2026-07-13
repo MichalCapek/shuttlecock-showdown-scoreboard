@@ -8,6 +8,7 @@ interface CourtControlShellProps {
     currentSet: number;
     setsA: number;
     setsB: number;
+    tracker?: React.ReactNode;
     actionBar: React.ReactNode;
     children: React.ReactNode;
 }
@@ -64,6 +65,7 @@ export function CourtControlShell({
     currentSet,
     setsA,
     setsB,
+    tracker,
     actionBar,
     children,
 }: CourtControlShellProps) {
@@ -105,6 +107,8 @@ export function CourtControlShell({
                     />
                 </nav>
             </header>
+
+            {tracker}
 
             <div className="flex min-h-0 flex-1 flex-col justify-end px-2 pb-2 sm:px-3">
                 {children}

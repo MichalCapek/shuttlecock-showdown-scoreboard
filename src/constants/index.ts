@@ -1,4 +1,4 @@
-import type { CourtScore } from "@/types";
+import type { CourtScore, CourtTrackerState } from "@/types";
 
 export const COURT_IDS = {
     COURT_1: "court1",
@@ -16,6 +16,16 @@ export const FIRESTORE_DOCS = {
     OVERRIDE_NAMES: "overrideNames",
     NAMES: "names",
 } as const;
+
+export const DEFAULT_COURT_TRACKER: CourtTrackerState = {
+    gameMode: "doubles",
+    leftTop: "",
+    leftBottom: "",
+    rightTop: "",
+    rightBottom: "",
+    teamASide: "left",
+    serverSlot: "leftBottom",
+};
 
 export const DEFAULT_COURT_SCORE: CourtScore = {
     teamA: 0,

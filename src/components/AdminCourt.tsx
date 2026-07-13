@@ -11,13 +11,16 @@ import { useCourtScore } from "../hooks/useCourtScore";
 import { useAdminAuth } from "../hooks/useAdminAuth";
 import { useMatchInfo } from "../hooks/useMatchInfo";
 import { useOverrideNames } from "@/hooks/useOverrideNames";
+import { useCourtTracker } from "@/hooks/useCourtTracker";
 import { TeamBox } from "@/components/TeamBox";
 import { Button } from "@/components/ui/button";
 import { AdminLogin } from "@/components/admin/AdminLogin";
 import { CourtControlShell } from "@/components/admin/CourtControlShell";
+import { CourtTrackerPanel } from "@/components/admin/CourtTrackerPanel";
 import { TeamNameOverrideDialog } from "@/components/admin/TeamNameOverrideDialog";
 import { ConfirmDialog } from "@/components/admin/ConfirmDialog";
 import { cn } from "@/lib/utils";
+import type { PlayerSlot } from "@/types";
 
 function ActionButton({
     onClick,
@@ -49,7 +52,6 @@ function ActionButton({
 
 export default function AdminCourt() {
     const { courtId } = useParams();
-    const [isSwapped, setIsSwapped] = useState(false);
     const { matchInfo } = useMatchInfo();
 
     const { isAuthed, checkPassword } = useAdminAuth(courtId!);
@@ -58,13 +60,28 @@ export default function AdminCourt() {
     const { overrideNames, saveOverrideNames, clearOverrideNames } =
         useOverrideNames(courtId!);
 
+    const {
+        tracker,
+        save: saveTracker,
+        setGameMode,
+        swapSides,
+        swapPartnersOnSide,
+        setServerForTeam,
+        applyPointScored,
+        syncServerPosition,
+        reset: resetTracker,
+        getDisplayName: getTrackerDisplayName,
+        getSinglesNameForSide,
+        isHomeOnLeft,
+    } = useCourtTracker(courtId!);
+
     const [showNameDialog, setShowNameDialog] = useState(false);
     const [formNames, setFormNames] = useState({ teamAName: "", teamBName: "" });
     const [confirmAction, setConfirmAction] = useState<"endSet" | "reset" | null>(null);
 
     const courtLabel = courtId === "court1" ? "Kurt 1" : courtId === "court2" ? "Kurt 2" : courtId!;
 
-    const getDisplayName = (team: "A" | "B") =>
+    const getTeamName = (team: "A" | "B") =>
         team === "A"
             ? overrideNames.teamANameOverride || matchInfo.teamAName
             : overrideNames.teamBNameOverride || matchInfo.teamBName;
@@ -88,7 +105,30 @@ export default function AdminCourt() {
 
     const handleReset = async () => {
         await resetMatch();
+        await resetTracker();
         setConfirmAction(null);
+    };
+
+    const handleToggleServer = async () => {
+        const newTeam = score.server === "home" ? "B" : "A";
+        await toggleServer();
+        setServerForTeam(newTeam, score.teamA, score.teamB);
+    };
+
+    const handleSyncServerFromScore = async (team: "A" | "B") => {
+        const currentTeam = score.server === "home" ? "A" : "B";
+        if (currentTeam !== team) {
+            await toggleServer();
+        }
+    };
+
+    const handleSavePlayers = (players: Record<PlayerSlot, string>) => {
+        saveTracker({
+            leftTop: players.leftTop,
+            leftBottom: players.leftBottom,
+            rightTop: players.rightTop,
+            rightBottom: players.rightBottom,
+        });
     };
 
     const openNameDialog = () => {
@@ -109,39 +149,49 @@ export default function AdminCourt() {
         );
     }
 
+    const servingTeam = score.server === "home" ? "A" : "B";
+
     const teamAProps = {
-        displayName: getDisplayName("A"),
+        displayName: getTeamName("A"),
         scoreValue: score.teamA,
         setsWon: score.setsA,
         isServer: score.server === "home",
         accent: "blue" as const,
         compact: true,
-        onIncrement: () => updateScore("A", score.teamA + 1),
+        onIncrement: async () => {
+            const newScore = score.teamA + 1;
+            await updateScore("A", newScore);
+            applyPointScored("A", servingTeam, newScore, score.teamB);
+        },
         onDecrement: () => updateScore("A", Math.max(0, score.teamA - 1)),
     };
 
     const teamBProps = {
-        displayName: getDisplayName("B"),
+        displayName: getTeamName("B"),
         scoreValue: score.teamB,
         setsWon: score.setsB,
         isServer: score.server === "away",
         accent: "red" as const,
         compact: true,
-        onIncrement: () => updateScore("B", score.teamB + 1),
+        onIncrement: async () => {
+            const newScore = score.teamB + 1;
+            await updateScore("B", newScore);
+            applyPointScored("B", servingTeam, score.teamA, newScore);
+        },
         onDecrement: () => updateScore("B", Math.max(0, score.teamB - 1)),
     };
 
     const actionBar = (
         <div className="flex items-stretch gap-1 px-2 pt-2 pb-[max(0.5rem,env(safe-area-inset-bottom))]">
             <ActionButton
-                onClick={toggleServer}
+                onClick={handleToggleServer}
                 icon={RefreshCw}
                 label="Servis"
                 variant="default"
                 className="min-w-[3.25rem] border-amber-400 bg-amber-400 text-black hover:bg-amber-500"
             />
             <ActionButton
-                onClick={() => setIsSwapped((p) => !p)}
+                onClick={swapSides}
                 icon={ArrowLeftRight}
                 label="Prohodit"
                 className="min-w-[3.25rem]"
@@ -176,18 +226,35 @@ export default function AdminCourt() {
                 currentSet={score.currentSet}
                 setsA={score.setsA}
                 setsB={score.setsB}
+                tracker={
+                    <CourtTrackerPanel
+                        tracker={tracker}
+                        scoreServer={score.server}
+                        scoreA={score.teamA}
+                        scoreB={score.teamB}
+                        teamAName={getTeamName("A")}
+                        teamBName={getTeamName("B")}
+                        getDisplayName={getTrackerDisplayName}
+                        getSinglesNameForSide={getSinglesNameForSide}
+                        onSetGameMode={setGameMode}
+                        onSwapPartnersOnSide={swapPartnersOnSide}
+                        onSavePlayers={handleSavePlayers}
+                        onSyncServerFromScore={handleSyncServerFromScore}
+                        onSyncServerPosition={syncServerPosition}
+                    />
+                }
                 actionBar={actionBar}
             >
                 <div className="flex justify-center gap-2">
-                    {isSwapped ? (
+                    {isHomeOnLeft ? (
                         <>
-                            <TeamBox {...teamBProps} />
                             <TeamBox {...teamAProps} />
+                            <TeamBox {...teamBProps} />
                         </>
                     ) : (
                         <>
-                            <TeamBox {...teamAProps} />
                             <TeamBox {...teamBProps} />
+                            <TeamBox {...teamAProps} />
                         </>
                     )}
                 </div>

@@ -48,3 +48,17 @@ export interface OverallMatchData {
     homeScore: number;
     awayScore: number;
 }
+
+export type GameMode = "singles" | "doubles";
+export type CourtSide = "left" | "right";
+export type PlayerSlot = "leftTop" | "leftBottom" | "rightTop" | "rightBottom";
+
+export interface CourtTrackerState {
+    gameMode: GameMode;
+    leftTop: string;
+    leftBottom: string;
+    rightTop: string;
+    rightBottom: string;
+    teamASide: CourtSide;
+    serverSlot: PlayerSlot;
+}
