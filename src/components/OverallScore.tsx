@@ -1,6 +1,10 @@
-import React from 'react';
-import homeTeamLogo from '../../assets/BkBenatky_logo.png';
-const logos = import.meta.glob('../../assets/*.*', { eager: true, query: '?url', import: 'default' });
+import homeTeamLogo from "../../assets/BkBenatky_logo.png";
+
+const logos = import.meta.glob("../../assets/*.*", {
+    eager: true,
+    query: "?url",
+    import: "default",
+});
 
 interface OverallScoreProps {
     homeTeam: string;
@@ -10,65 +14,67 @@ interface OverallScoreProps {
     awayLogoFileName: string;
 }
 
-const OverallScore: React.FC<OverallScoreProps> = ({
-                                                       homeTeam,
-                                                       awayTeam,
-                                                       homeScore,
-                                                       awayScore,
-                                                       awayLogoFileName,
-                                                   }) => {
-    const awayLogoPath = `../../assets/${awayLogoFileName}`;
-    const awayLogoUrl = logos[awayLogoPath] || logos['../../assets/default.png'];
+const resolveAwayLogo = (fileName: string) => {
+    const awayLogoPath = `../../assets/${fileName}`;
+    return logos[awayLogoPath] ?? logos["../../assets/default.png"];
+};
+
+const TeamLogo = ({ src, alt }: { src: string; alt: string }) => (
+    <div className="flex h-14 w-14 items-center justify-center rounded-full bg-white p-2 shadow-lg sm:h-40 sm:w-40 sm:p-3">
+        <img src={src} alt={alt} className="h-full w-full object-contain" />
+    </div>
+);
+
+const OverallScore = ({
+    homeTeam,
+    awayTeam,
+    homeScore,
+    awayScore,
+    awayLogoFileName,
+}: OverallScoreProps) => {
+    const awayLogoUrl = resolveAwayLogo(awayLogoFileName);
 
     return (
-        <div className="w-full px-6 sm:px-4 py-4 sm:py-6">
-            {/* Mobilní zobrazení */}
-            <div className="flex flex-col sm:hidden space-y-6">
-                {/* Home */}
+        <div className="w-full px-6 py-4 sm:px-4 sm:py-6">
+            <div className="flex flex-col gap-6 sm:hidden">
                 <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-3">
-                        <div className="w-14 h-14 bg-white rounded-full flex items-center justify-center shadow-lg p-2">
-                            <img src={homeTeamLogo} alt="Home Team Logo" className="w-full h-full object-contain" />
-                        </div>
-                        <div className="text-white text-base font-bold">{homeTeam}</div>
+                    <div className="flex items-center gap-3">
+                        <TeamLogo src={homeTeamLogo} alt={`${homeTeam} logo`} />
+                        <span className="text-base font-bold text-white">{homeTeam}</span>
                     </div>
-                    <div className="text-white text-4xl font-black drop-shadow-lg">{homeScore}</div>
+                    <span className="text-4xl font-black text-white drop-shadow-lg">
+                        {homeScore}
+                    </span>
                 </div>
 
-                {/* Away */}
                 <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-3">
-                        <div className="w-14 h-14 bg-white rounded-full flex items-center justify-center shadow-lg p-2">
-                            <img src={awayLogoUrl} alt="Away Team Logo" className="w-full h-full object-contain" />
-                        </div>
-                        <div className="text-white text-base font-bold">{awayTeam}</div>
+                    <div className="flex items-center gap-3">
+                        <TeamLogo src={awayLogoUrl} alt={`${awayTeam} logo`} />
+                        <span className="text-base font-bold text-white">{awayTeam}</span>
                     </div>
-                    <div className="text-white text-4xl font-black drop-shadow-lg">{awayScore}</div>
+                    <span className="text-4xl font-black text-white drop-shadow-lg">
+                        {awayScore}
+                    </span>
                 </div>
             </div>
 
-
-            {/* Desktop zobrazení */}
-            <div className="hidden sm:flex items-center justify-center space-x-12">
-                {/* Home */}
-                <div className="flex items-center space-x-6">
-                    <div className="w-40 h-40 bg-white rounded-full flex items-center justify-center shadow-lg p-3">
-                        <img src={homeTeamLogo} alt="Home Team Logo" className="w-full h-full object-contain" />
-                    </div>
-                    <div className="text-white text-2xl font-semibold">{homeTeam}</div>
-                    <div className="text-white text-9xl font-black drop-shadow-lg">{homeScore}</div>
+            <div className="hidden items-center justify-center gap-12 sm:flex">
+                <div className="flex items-center gap-6">
+                    <TeamLogo src={homeTeamLogo} alt={`${homeTeam} logo`} />
+                    <span className="text-2xl font-semibold text-white">{homeTeam}</span>
+                    <span className="text-9xl font-black text-white drop-shadow-lg">
+                        {homeScore}
+                    </span>
                 </div>
 
-                {/* VS */}
-                <div className="text-white text-2xl font-bold opacity-80">VS</div>
+                <span className="text-2xl font-bold text-white/80">VS</span>
 
-                {/* Away */}
-                <div className="flex items-center space-x-6">
-                    <div className="text-white text-9xl font-black drop-shadow-lg">{awayScore}</div>
-                    <div className="text-white text-2xl font-semibold">{awayTeam}</div>
-                    <div className="w-40 h-40 bg-white rounded-full flex items-center justify-center shadow-lg p-3">
-                        <img src={awayLogoUrl} alt="Away Team Logo" className="w-full h-full object-contain" />
-                    </div>
+                <div className="flex items-center gap-6">
+                    <span className="text-9xl font-black text-white drop-shadow-lg">
+                        {awayScore}
+                    </span>
+                    <span className="text-2xl font-semibold text-white">{awayTeam}</span>
+                    <TeamLogo src={awayLogoUrl} alt={`${awayTeam} logo`} />
                 </div>
             </div>
         </div>

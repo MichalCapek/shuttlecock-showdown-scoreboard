@@ -1,4 +1,3 @@
-import React from "react";
 import type { CourtData } from "@/types";
 import { TeamScoreBox } from "@/components/TeamScoreBox";
 
@@ -7,24 +6,26 @@ interface CourtDisplayProps {
     data: CourtData;
 }
 
-const CourtDisplay: React.FC<CourtDisplayProps> = ({ courtNumber, data }) => {
+const CourtDisplay = ({ courtNumber, data }: CourtDisplayProps) => {
     const pastSetsDisplay = data.pastSets?.length
         ? data.pastSets.map((set) => `${set.teamA}:${set.teamB}`).join(", ")
         : null;
 
     return (
-        <div className="h-full flex flex-col py-6">
-            <div className="text-center mb-4">
-                <h2 className="text-2xl sm:text-4xl font-bold text-white mb-2">
+        <div className="flex h-full flex-col py-6">
+            <div className="mb-4 text-center">
+                <h2 className="mb-1 text-2xl font-bold text-white sm:text-4xl">
                     KURT {courtNumber}
                 </h2>
-                <div className="text-white/90 text-lg sm:text-2xl font-medium mt-2 min-h-[1.5rem] sm:min-h-[2rem]">
+                <p className="text-sm font-medium uppercase tracking-wider text-white/70 sm:text-base">
+                    Set {data.currentSet}
+                </p>
+                <div className="mt-2 min-h-[1.5rem] text-lg font-medium text-white/90 sm:min-h-[2rem] sm:text-2xl">
                     {pastSetsDisplay}
                 </div>
             </div>
 
-            {/* Mobile layout */}
-            <div className="flex sm:hidden flex-row items-center justify-center gap-4 px-2">
+            <div className="flex flex-row items-center justify-center gap-4 px-2 sm:hidden">
                 <TeamScoreBox
                     team={data.homeTeam}
                     isServer={data.server === "home"}
@@ -37,15 +38,12 @@ const CourtDisplay: React.FC<CourtDisplayProps> = ({ courtNumber, data }) => {
                 />
             </div>
 
-            {/* Desktop layout */}
-            <div className="hidden sm:flex flex-1 flex-row items-center justify-center gap-12">
+            <div className="hidden flex-1 flex-row items-center justify-center gap-12 sm:flex">
                 <TeamScoreBox
                     team={data.homeTeam}
                     isServer={data.server === "home"}
                 />
-                <div className="text-center">
-                    <span className="text-2xl font-bold text-muted-foreground">vs</span>
-                </div>
+                <span className="text-2xl font-bold text-white/60">vs</span>
                 <TeamScoreBox
                     team={data.awayTeam}
                     isServer={data.server === "away"}
