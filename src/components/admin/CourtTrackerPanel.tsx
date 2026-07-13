@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { ArrowUpDown, Pencil, Users, User } from "lucide-react";
+import { ArrowUpDown, Pencil, RefreshCw, Users, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import type { CourtSide, CourtTrackerState, GameMode, PlayerSlot } from "@/types";
@@ -26,6 +26,7 @@ interface CourtTrackerPanelProps {
     onSavePlayers: (players: Record<PlayerSlot, string>) => void;
     onSyncServerFromScore: (team: "A" | "B") => void;
     onSyncServerPosition: (serverTeam: "A" | "B", scoreA: number, scoreB: number) => void;
+    onToggleServer: () => void;
 }
 
 function PlayerChip({
@@ -88,6 +89,7 @@ export function CourtTrackerPanel({
     onSavePlayers,
     onSyncServerFromScore,
     onSyncServerPosition,
+    onToggleServer,
 }: CourtTrackerPanelProps) {
     const [showEdit, setShowEdit] = useState(false);
     const isSingles = tracker.gameMode === "singles";
@@ -223,10 +225,18 @@ export function CourtTrackerPanel({
 
             <div className="mt-1.5 flex gap-1">
                 <Button
+                    size="sm"
+                    onClick={onToggleServer}
+                    className="h-7 flex-1 gap-1 border-amber-400 bg-amber-400 px-1 text-[10px] text-black hover:bg-amber-500"
+                >
+                    <RefreshCw className="h-3 w-3" />
+                    Servis
+                </Button>
+                <Button
                     variant="outline"
                     size="sm"
                     onClick={() => setShowEdit(true)}
-                    className="h-7 w-full gap-1 px-1 text-[10px]"
+                    className="h-7 flex-1 gap-1 px-1 text-[10px]"
                 >
                     <Pencil className="h-3 w-3" />
                     Jména hráčů

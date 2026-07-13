@@ -3,7 +3,6 @@ import { useParams } from "react-router-dom";
 import {
     ArrowLeftRight,
     Pencil,
-    RefreshCw,
     Flag,
     Trash2,
 } from "lucide-react";
@@ -185,13 +184,6 @@ export default function AdminCourt() {
     const actionBar = (
         <div className="flex items-stretch gap-1 px-2 pt-2 pb-[max(0.5rem,env(safe-area-inset-bottom))]">
             <ActionButton
-                onClick={handleToggleServer}
-                icon={RefreshCw}
-                label="Servis"
-                variant="default"
-                className="min-w-[3.25rem] border-amber-400 bg-amber-400 text-black hover:bg-amber-500"
-            />
-            <ActionButton
                 onClick={swapSides}
                 icon={ArrowLeftRight}
                 label="Prohodit"
@@ -243,6 +235,7 @@ export default function AdminCourt() {
                             onSavePlayers={handleSavePlayers}
                             onSyncServerFromScore={handleSyncServerFromScore}
                             onSyncServerPosition={syncServerPosition}
+                            onToggleServer={handleToggleServer}
                         />
                         <CourtTimerPanel />
                     </>
