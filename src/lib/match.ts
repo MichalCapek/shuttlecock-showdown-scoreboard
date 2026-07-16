@@ -8,7 +8,7 @@ export function parseMatchDoc(data: Record<string, unknown>): MatchInfoWithOvera
         round: (data.round as string) ?? "",
         overallScoreA: (data.overallScoreA as number) ?? 0,
         overallScoreB: (data.overallScoreB as number) ?? 0,
-        awayLogo: (data.awayLogo as string) ?? "default.png",
+        awayLogo: (data.awayLogo as string) ?? "",
     };
 }
 

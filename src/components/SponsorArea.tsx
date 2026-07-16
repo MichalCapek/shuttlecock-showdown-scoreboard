@@ -23,15 +23,15 @@ const SponsorArea = () => {
     }, []);
 
     return (
-        <div className="flex h-full w-full flex-col items-center justify-center gap-2 px-4 py-4 sm:flex-row sm:gap-6">
-            <span className="text-sm font-medium text-white/90 sm:text-base">
+        <div className="flex h-full w-full flex-col flex-wrap items-center justify-center gap-2 px-3 py-3 xs:gap-3 sm:flex-row sm:gap-4 md:gap-6">
+            <span className="shrink-0 text-center text-xs font-medium text-white/90 xs:text-sm sm:text-base">
                 Partneři klubu:
             </span>
-            <div className="flex items-center gap-4 sm:gap-6">
+            <div className="flex max-w-full flex-wrap items-center justify-center gap-3 xs:gap-4 sm:gap-5 md:gap-6">
                 {SPONSORS.map((sponsor, index) => (
                     <div
                         key={sponsor.name}
-                        className={`transition-all duration-500 ${
+                        className={`shrink-0 transition-all duration-500 ${
                             index === activeIndex
                                 ? "scale-105 opacity-100"
                                 : "scale-100 opacity-30"
@@ -40,7 +40,7 @@ const SponsorArea = () => {
                         <img
                             src={sponsor.logo}
                             alt={sponsor.name}
-                            className="h-8 w-auto object-contain sm:h-12"
+                            className="h-7 w-auto max-w-[5rem] object-contain xs:h-8 sm:h-10 md:h-12"
                         />
                     </div>
                 ))}

@@ -35,13 +35,13 @@ export function AdminLogin({ title, description, onLogin, errorMessage }: AdminL
     };
 
     return (
-        <div className="admin-shell flex min-h-screen items-center justify-center bg-slate-50 px-4">
+        <div className="admin-shell flex min-h-dvh items-center justify-center bg-slate-50 px-3 py-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] pt-[max(1.5rem,env(safe-area-inset-top))] xs:px-4">
             <Card className="w-full max-w-md shadow-lg">
                 <CardHeader className="text-center">
                     <div className="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-full bg-brand-blue/10">
                         <Lock className="h-6 w-6 text-brand-blue" />
                     </div>
-                    <CardTitle className="text-xl">{title}</CardTitle>
+                    <CardTitle className="text-lg xs:text-xl">{title}</CardTitle>
                     {description && <CardDescription>{description}</CardDescription>}
                 </CardHeader>
                 <CardContent>
@@ -55,12 +55,17 @@ export function AdminLogin({ title, description, onLogin, errorMessage }: AdminL
                                 onChange={(e) => setPassword(e.target.value)}
                                 placeholder="Zadejte heslo"
                                 autoFocus
+                                className="min-h-[44px] text-base"
                             />
                         </div>
                         {error && (
                             <p className="text-center text-sm text-destructive">{error}</p>
                         )}
-                        <Button type="submit" className="w-full bg-brand-blue hover:bg-brand-blue/90" disabled={loading}>
+                        <Button
+                            type="submit"
+                            className="min-h-[44px] w-full bg-brand-blue hover:bg-brand-blue/90"
+                            disabled={loading}
+                        >
                             {loading ? "Ověřuji…" : "Přihlásit"}
                         </Button>
                     </form>

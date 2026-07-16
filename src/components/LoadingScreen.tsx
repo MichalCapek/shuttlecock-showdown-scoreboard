@@ -12,20 +12,20 @@ export const LoadingScreen = ({
     return (
         <div
             className={cn(
-                "flex min-h-screen items-center justify-center text-2xl",
+                "flex min-h-dvh items-center justify-center px-4 text-lg xs:text-xl sm:text-2xl",
                 variant === "scoreboard"
                     ? "bg-gradient-to-br from-brand-blue to-brand-red text-white"
                     : "bg-background text-foreground"
             )}
         >
-            <div className="flex flex-col items-center gap-4">
+            <div className="flex flex-col items-center gap-3 xs:gap-4">
                 <div
                     className={cn(
-                        "h-8 w-8 animate-spin rounded-full border-4 border-t-transparent",
+                        "h-7 w-7 animate-spin rounded-full border-4 border-t-transparent xs:h-8 xs:w-8",
                         variant === "scoreboard" ? "border-white" : "border-primary"
                     )}
                 />
-                <span>{message}</span>
+                <span className="text-center">{message}</span>
             </div>
         </div>
     );

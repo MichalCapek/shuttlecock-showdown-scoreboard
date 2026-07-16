@@ -27,6 +27,7 @@ import { CourtSummaryCard } from "@/components/admin/CourtSummaryCard";
 import { TeamNameOverrideDialog } from "@/components/admin/TeamNameOverrideDialog";
 import { ConfirmDialog } from "@/components/admin/ConfirmDialog";
 import { LoadingScreen } from "@/components/LoadingScreen";
+import { getAvailableAwayLogos } from "@/lib/teamLogos";
 import { resolveTeamName } from "@/lib/scoreboard";
 
 export default function AdminGlobal() {
@@ -205,8 +206,15 @@ export default function AdminGlobal() {
                                     id="awayLogo"
                                     value={draft.awayLogo || ""}
                                     onChange={(e) => handleInputChange("awayLogo", e.target.value)}
-                                    placeholder="např. team-b.png"
+                                    placeholder="např. KLI_logo.png"
                                 />
+                                <p className="text-xs text-muted-foreground">
+                                    Soubor musí být ve složce{" "}
+                                    <code className="rounded bg-muted px-1">assets/</code>. Dostupné:{" "}
+                                    {getAvailableAwayLogos()
+                                        .filter((name) => !name.includes("benatky") && name !== "shuttlecock.png")
+                                        .join(", ")}
+                                </p>
                             </div>
                         </fieldset>
 
@@ -244,14 +252,16 @@ export default function AdminGlobal() {
                             </div>
                         </fieldset>
 
-                        <Button
-                            onClick={handleSubmit}
-                            disabled={saving}
-                            className="w-full gap-2 bg-brand-blue hover:bg-brand-blue/90"
-                        >
-                            <Save className="h-4 w-4" />
-                            {saving ? "Ukládám…" : "Uložit změny"}
-                        </Button>
+                        <div className="sticky bottom-[max(0.75rem,env(safe-area-inset-bottom))] z-10 -mx-1 bg-card/95 px-1 py-2 backdrop-blur-sm sm:static sm:mx-0 sm:bg-transparent sm:p-0 sm:backdrop-blur-none">
+                            <Button
+                                onClick={handleSubmit}
+                                disabled={saving}
+                                className="min-h-[44px] w-full gap-2 bg-brand-blue hover:bg-brand-blue/90"
+                            >
+                                <Save className="h-4 w-4" />
+                                {saving ? "Ukládám…" : "Uložit změny"}
+                            </Button>
+                        </div>
                     </CardContent>
                 </Card>
 
@@ -286,7 +296,7 @@ export default function AdminGlobal() {
                             <Button
                                 variant="destructive"
                                 onClick={() => setShowResetConfirm(true)}
-                                className="gap-2"
+                                className="min-h-[44px] w-full gap-2 xs:w-auto"
                             >
                                 <RotateCcw className="h-4 w-4" />
                                 Reset obou kurtů

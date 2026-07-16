@@ -35,7 +35,7 @@ const Index = () => {
                     awayTeam={matchInfo.teamBName}
                     homeScore={overallScoreA}
                     awayScore={overallScoreB}
-                    awayLogoFileName={awayLogo ?? "default.png"}
+                    awayLogoFileName={awayLogo ?? ""}
                 />
             }
             courtLeft={<CourtDisplay courtNumber={1} data={court1Data} />}

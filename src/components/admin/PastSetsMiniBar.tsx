@@ -23,7 +23,7 @@ export function PastSetsMiniBar({
     }));
 
     return (
-        <div className="mx-2 mb-1.5 mt-5 shrink-0 border-t border-border/50 pt-3 sm:mx-3 lg:mx-0 lg:mt-4">
+        <div className="mx-2 mb-1.5 mt-4 shrink-0 border-t border-border/50 pt-3 xs:mx-3 sm:mt-5 lg:mx-0 lg:mt-4">
             <span className="mb-1 block text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
                 Přehled setů
             </span>
@@ -48,7 +48,7 @@ export function PastSetsMiniBar({
                 </thead>
                 <tbody>
                     <tr>
-                        <td className="truncate py-0.5 pr-1 font-semibold text-brand-blue" title={teamAName}>
+                        <td className="break-words py-0.5 pr-1 font-semibold leading-tight text-brand-blue">
                             {teamAName}
                         </td>
                         {columns.map((set, index) => (
@@ -64,7 +64,7 @@ export function PastSetsMiniBar({
                         ))}
                     </tr>
                     <tr>
-                        <td className="truncate py-0.5 pr-1 font-semibold text-brand-red" title={teamBName}>
+                        <td className="break-words py-0.5 pr-1 font-semibold leading-tight text-brand-red">
                             {teamBName}
                         </td>
                         {columns.map((set, index) => (

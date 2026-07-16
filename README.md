@@ -78,22 +78,34 @@ GitHub Actions runs `npm run test` and `npm run build` on pushes and pull reques
 
 The project is configured for [Firebase Hosting](https://firebase.google.com/docs/hosting). The hosting site is `badminton-benatky` (Firebase project: `badminton-benatky-scoreboard`).
 
-```sh
-npm run build
-firebase deploy
-```
+The Firebase **CLI** is `firebase-tools` (a dev dependency). Do not confuse it with the `firebase` npm package, which is only the client SDK used in the app.
 
-To deploy only hosting:
+First-time setup:
 
 ```sh
-firebase deploy --only hosting
+npm install
+npx firebase login
 ```
 
-Firestore rules and indexes can be deployed separately:
+Deploy hosting (builds the app, then uploads `dist/`):
 
 ```sh
-firebase deploy --only firestore
+npm run deploy:hosting
 ```
+
+Full deploy (hosting + Firestore rules/indexes + storage rules):
+
+```sh
+npm run deploy
+```
+
+Firestore rules and indexes only:
+
+```sh
+npm run deploy:firestore
+```
+
+You can also run CLI commands directly via `npx`, e.g. `npx firebase deploy --only hosting`.
 
 ## Admin access
 

@@ -37,7 +37,7 @@ export function TeamNameOverrideDialog({
 }: TeamNameOverrideDialogProps) {
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="sm:max-w-md">
+            <DialogContent className="max-h-[90dvh] overflow-y-auto sm:max-w-md">
                 <DialogHeader>
                     <DialogTitle>{title}</DialogTitle>
                     {description && <DialogDescription>{description}</DialogDescription>}
@@ -51,6 +51,7 @@ export function TeamNameOverrideDialog({
                             value={teamAName}
                             onChange={(e) => onTeamAChange(e.target.value)}
                             placeholder="Ponechte prázdné pro výchozí jméno"
+                            className="min-h-[44px] text-base"
                         />
                     </div>
                     <div className="space-y-2">
@@ -60,21 +61,34 @@ export function TeamNameOverrideDialog({
                             value={teamBName}
                             onChange={(e) => onTeamBChange(e.target.value)}
                             placeholder="Ponechte prázdné pro výchozí jméno"
+                            className="min-h-[44px] text-base"
                         />
                     </div>
                 </div>
 
                 <DialogFooter className="flex-col gap-2 sm:flex-row sm:justify-between">
                     {onClear && (
-                        <Button variant="destructive" size="sm" onClick={onClear} className="sm:mr-auto">
+                        <Button
+                            variant="destructive"
+                            size="sm"
+                            onClick={onClear}
+                            className="min-h-[44px] w-full sm:mr-auto sm:w-auto"
+                        >
                             Vymazat přepis
                         </Button>
                     )}
-                    <div className="flex gap-2">
-                        <Button variant="outline" onClick={() => onOpenChange(false)}>
+                    <div className="flex w-full flex-col gap-2 xs:flex-row xs:justify-end">
+                        <Button
+                            variant="outline"
+                            onClick={() => onOpenChange(false)}
+                            className="min-h-[44px] w-full xs:w-auto"
+                        >
                             Zrušit
                         </Button>
-                        <Button onClick={onSave} className="bg-brand-blue hover:bg-brand-blue/90">
+                        <Button
+                            onClick={onSave}
+                            className="min-h-[44px] w-full bg-brand-blue hover:bg-brand-blue/90 xs:w-auto"
+                        >
                             Uložit
                         </Button>
                     </div>

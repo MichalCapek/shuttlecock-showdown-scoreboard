@@ -10,7 +10,7 @@ describe("parseMatchDoc", () => {
             round: "",
             overallScoreA: 0,
             overallScoreB: 0,
-            awayLogo: "default.png",
+            awayLogo: "",
         });
     });
 

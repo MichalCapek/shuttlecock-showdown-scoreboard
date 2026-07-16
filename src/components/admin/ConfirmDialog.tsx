@@ -32,16 +32,18 @@ export function ConfirmDialog({
 }: ConfirmDialogProps) {
     return (
         <AlertDialog open={open} onOpenChange={onOpenChange}>
-            <AlertDialogContent>
+            <AlertDialogContent className="max-h-[90dvh] overflow-y-auto">
                 <AlertDialogHeader>
                     <AlertDialogTitle>{title}</AlertDialogTitle>
                     <AlertDialogDescription>{description}</AlertDialogDescription>
                 </AlertDialogHeader>
-                <AlertDialogFooter>
-                    <AlertDialogCancel>{cancelLabel}</AlertDialogCancel>
+                <AlertDialogFooter className="flex-col gap-2 xs:flex-row xs:justify-end">
+                    <AlertDialogCancel className="min-h-[44px] w-full xs:w-auto">
+                        {cancelLabel}
+                    </AlertDialogCancel>
                     <AlertDialogAction
                         onClick={onConfirm}
-                        className={destructive ? "bg-destructive hover:bg-destructive/90" : undefined}
+                        className={`min-h-[44px] w-full xs:w-auto ${destructive ? "bg-destructive hover:bg-destructive/90" : ""}`}
                     >
                         {confirmLabel}
                     </AlertDialogAction>

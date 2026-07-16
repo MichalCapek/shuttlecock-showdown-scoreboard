@@ -134,7 +134,7 @@ export function CourtTrackerPanel({
                         size="sm"
                         onClick={() => onSetGameMode("singles")}
                         className={cn(
-                            "h-7 gap-1 px-2 text-[10px]",
+                            "min-h-[44px] gap-1 px-2 text-[10px]",
                             isSingles && "bg-brand-blue hover:bg-brand-blue/90"
                         )}
                     >
@@ -146,7 +146,7 @@ export function CourtTrackerPanel({
                         size="sm"
                         onClick={() => onSetGameMode("doubles")}
                         className={cn(
-                            "h-7 gap-1 px-2 text-[10px]",
+                            "min-h-[44px] gap-1 px-2 text-[10px]",
                             !isSingles && "bg-brand-blue hover:bg-brand-blue/90"
                         )}
                     >
@@ -156,7 +156,7 @@ export function CourtTrackerPanel({
                 </div>
             </div>
 
-            <div className="relative mx-auto aspect-[134/61] w-full max-h-[7.5rem] overflow-hidden rounded-lg border-2 border-emerald-900/50 bg-gradient-to-b from-emerald-500 to-emerald-700 shadow-inner sm:max-h-[9rem] lg:max-h-none">
+            <div className="relative mx-auto aspect-[134/61] w-full max-h-[6.5rem] overflow-hidden rounded-lg border-2 border-emerald-900/50 bg-gradient-to-b from-emerald-500 to-emerald-700 shadow-inner xs:max-h-[7.5rem] sm:max-h-[9rem] md:max-h-[10rem] lg:max-h-[12rem] xl:max-h-none">
                 <BadmintonCourtLines isSingles={isSingles} />
 
                 <div className="absolute left-1/2 top-1/2 z-10 -translate-x-1/2 -translate-y-1/2 rounded bg-white/90 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-emerald-800 shadow-sm">
@@ -165,7 +165,7 @@ export function CourtTrackerPanel({
 
                 <span
                     className={cn(
-                        "absolute left-1.5 top-1 max-w-[42%] truncate text-[8px] font-semibold",
+                        "absolute left-1.5 top-1 max-w-[45%] break-words leading-tight text-[8px] font-semibold",
                         homeOnLeft ? "text-brand-blue" : "text-brand-red"
                     )}
                 >
@@ -173,7 +173,7 @@ export function CourtTrackerPanel({
                 </span>
                 <span
                     className={cn(
-                        "absolute right-1.5 top-1 max-w-[42%] truncate text-right text-[8px] font-semibold",
+                        "absolute right-1.5 top-1 max-w-[45%] break-words text-right leading-tight text-[8px] font-semibold",
                         homeOnLeft ? "text-brand-red" : "text-brand-blue"
                     )}
                 >
@@ -228,7 +228,7 @@ export function CourtTrackerPanel({
                 <Button
                     size="sm"
                     onClick={onToggleServer}
-                    className="h-7 flex-1 gap-1 border-amber-400 bg-amber-400 px-1 text-[10px] text-black hover:bg-amber-500"
+                    className="h-8 min-h-[44px] flex-1 gap-1 border-amber-400 bg-amber-400 px-1 text-[10px] text-black hover:bg-amber-500"
                 >
                     <RefreshCw className="h-3 w-3" />
                     Servis
@@ -237,7 +237,7 @@ export function CourtTrackerPanel({
                     variant="outline"
                     size="sm"
                     onClick={() => setShowEdit(true)}
-                    className="h-7 flex-1 gap-1 px-1 text-[10px]"
+                    className="h-8 min-h-[44px] flex-1 gap-1 px-1 text-[10px]"
                 >
                     <Pencil className="h-3 w-3" />
                     Jména hráčů

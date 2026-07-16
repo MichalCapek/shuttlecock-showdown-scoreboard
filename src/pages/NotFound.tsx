@@ -12,11 +12,13 @@ const NotFound = () => {
     }, [location.pathname]);
 
     return (
-        <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-brand-blue to-brand-red text-white">
+        <div className="flex min-h-dvh items-center justify-center bg-gradient-to-br from-brand-blue to-brand-red px-4 text-white">
             <div className="text-center">
-                <h1 className="mb-4 text-4xl font-bold">404</h1>
-                <p className="mb-4 text-xl text-white/80">Stránka nenalezena</p>
-                <Link to="/" className="underline hover:text-white/80">
+                <h1 className="mb-3 text-3xl font-bold xs:mb-4 xs:text-4xl sm:text-5xl">404</h1>
+                <p className="mb-4 text-base text-white/80 xs:text-lg sm:text-xl">
+                    Stránka nenalezena
+                </p>
+                <Link to="/" className="text-sm underline hover:text-white/80 xs:text-base">
                     Zpět na scoreboard
                 </Link>
             </div>
