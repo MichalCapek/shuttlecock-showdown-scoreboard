@@ -46,7 +46,8 @@ function ActionButton({
             variant={variant === "default" ? "default" : variant}
             onClick={onClick}
             className={cn(
-                "min-h-[44px] flex-col gap-0.5 px-1 py-1 text-[9px] font-medium leading-tight xs:text-[10px]",
+                "court-control-btn flex-col gap-0.5 px-1 text-[9px] font-medium leading-tight xs:text-[10px]",
+                variant === "outline" && "admin-outline-btn",
                 className
             )}
         >
@@ -148,7 +149,7 @@ function AdminCourtContent({ courtId }: { courtId: CourtId }) {
     }
 
     if (matchLoading || !matchInfo) {
-        return <LoadingScreen />;
+        return <LoadingScreen variant="scoreboard" />;
     }
 
     const servingTeam = score.server === "home" ? "A" : "B";
@@ -160,6 +161,7 @@ function AdminCourtContent({ courtId }: { courtId: CourtId }) {
         isServer: score.server === "home",
         accent: "blue" as const,
         compact: true,
+        darkSurface: true,
         onIncrement: async () => {
             const newScore = score.teamA + 1;
             const ok = await updateScore("A", newScore);
@@ -182,6 +184,7 @@ function AdminCourtContent({ courtId }: { courtId: CourtId }) {
         isServer: score.server === "away",
         accent: "red" as const,
         compact: true,
+        darkSurface: true,
         onIncrement: async () => {
             const newScore = score.teamB + 1;
             const ok = await updateScore("B", newScore);
@@ -198,7 +201,7 @@ function AdminCourtContent({ courtId }: { courtId: CourtId }) {
     };
 
     const actionBar = (
-        <div className="flex items-stretch gap-1 pt-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] xs:gap-1.5 lg:gap-2">
+        <div className="flex items-stretch gap-1 pt-1.5 pb-[max(0.35rem,env(safe-area-inset-bottom))] xs:gap-1.5 lg:gap-2">
             <ActionButton
                 onClick={swapSides}
                 icon={ArrowLeftRight}
@@ -213,7 +216,7 @@ function AdminCourtContent({ courtId }: { courtId: CourtId }) {
             />
             <Button
                 onClick={() => setConfirmAction("endSet")}
-                className="min-h-[44px] min-w-0 flex-[2] gap-1.5 bg-brand-blue px-2 text-xs font-semibold hover:bg-brand-blue/90 xs:text-sm"
+                className="court-control-btn min-w-0 flex-[2] gap-1 bg-brand-blue px-2 text-xs font-semibold hover:bg-brand-blue/90 xs:text-sm"
             >
                 <Flag className="h-4 w-4 shrink-0" />
                 Konec setu
@@ -221,7 +224,7 @@ function AdminCourtContent({ courtId }: { courtId: CourtId }) {
             <Button
                 variant="destructive"
                 onClick={() => setConfirmAction("reset")}
-                className="min-h-[44px] min-w-[3.25rem] flex-col gap-0.5 px-1 py-1 text-[9px] font-medium leading-tight xs:min-w-[4rem] xs:text-[10px]"
+                className="court-control-btn min-w-[3rem] flex-col gap-0.5 px-1 text-[9px] font-medium leading-tight xs:min-w-[3.25rem] xs:text-[10px]"
             >
                 <Trash2 className="h-4 w-4 shrink-0" />
                 Reset
@@ -255,7 +258,7 @@ function AdminCourtContent({ courtId }: { courtId: CourtId }) {
                                 onToggleServer={handleToggleServer}
                             />
                         </div>
-                        <div className="mx-2 mt-4 shrink-0 border-t border-border/50 pt-3 xs:mx-3 sm:mt-5 lg:col-start-1 lg:row-start-2 lg:mx-0">
+                        <div className="mx-2 mt-3 shrink-0 border-t border-white/10 pt-2 xs:mx-3 lg:col-start-1 lg:row-start-2 lg:mx-0">
                             <div className="flex w-full justify-center gap-2 xs:gap-3 lg:mx-auto lg:max-w-2xl lg:gap-4">
                                 {isHomeOnLeft ? (
                                     <>

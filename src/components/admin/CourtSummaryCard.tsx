@@ -10,6 +10,7 @@ import {
     CardTitle,
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { cn } from "@/lib/utils";
 import type { CourtScore } from "@/types";
 
 interface CourtSummaryCardProps {
@@ -32,15 +33,19 @@ export function CourtSummaryCard({
     onClearOverrides,
 }: CourtSummaryCardProps) {
     return (
-        <Card>
+        <Card className="admin-card">
             <CardHeader className="pb-3">
                 <div className="flex items-start justify-between gap-2">
                     <div className="min-w-0">
-                        <CardTitle className="text-base xs:text-lg">{label}</CardTitle>
-                        <CardDescription>Živý přehled skóre</CardDescription>
+                        <CardTitle className="admin-card-title text-base xs:text-lg">{label}</CardTitle>
+                        <CardDescription className="admin-card-desc">Živý přehled skóre</CardDescription>
                     </div>
                     <Link to={`/admin/${courtId}`} className="shrink-0">
-                        <Button variant="ghost" size="sm" className="min-h-[44px] gap-1 text-brand-blue">
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            className="admin-ghost-btn min-h-[44px] gap-1 text-sky-300 hover:text-sky-200"
+                        >
                             Ovládání
                             <ArrowRight className="h-4 w-4" />
                         </Button>
@@ -49,7 +54,7 @@ export function CourtSummaryCard({
             </CardHeader>
             <CardContent className="space-y-4">
                 {!data ? (
-                    <p className="text-sm text-muted-foreground">Načítám data…</p>
+                    <p className="admin-muted text-sm">Načítám data…</p>
                 ) : (
                     <>
                         <div className="grid grid-cols-1 gap-3 xs:grid-cols-2">
@@ -69,8 +74,8 @@ export function CourtSummaryCard({
                             />
                         </div>
 
-                        <div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
-                            <Badge variant="secondary">Set {data.currentSet}</Badge>
+                        <div className="admin-muted flex flex-wrap items-center gap-2 text-sm">
+                            <Badge className="admin-badge admin-badge-set">Set {data.currentSet}</Badge>
                             {data.pastSets && data.pastSets.length > 0 && (
                                 <span className="min-w-0 break-words">
                                     Historie:{" "}
@@ -84,14 +89,14 @@ export function CourtSummaryCard({
                             )}
                         </div>
 
-                        <Separator />
+                        <Separator className="admin-separator" />
 
                         <div className="flex flex-col gap-2 xs:flex-row xs:flex-wrap">
                             <Button
                                 variant="outline"
                                 size="sm"
                                 onClick={onEditNames}
-                                className="min-h-[44px] w-full gap-1.5 xs:w-auto"
+                                className="admin-outline-btn min-h-[44px] w-full gap-1.5 xs:w-auto"
                             >
                                 <Pencil className="h-3.5 w-3.5" />
                                 Přepsat jména
@@ -100,7 +105,7 @@ export function CourtSummaryCard({
                                 variant="ghost"
                                 size="sm"
                                 onClick={onClearOverrides}
-                                className="min-h-[44px] w-full gap-1.5 text-destructive hover:text-destructive xs:w-auto"
+                                className="min-h-[44px] w-full gap-1.5 text-red-300 hover:bg-red-500/10 hover:text-red-200 xs:w-auto"
                             >
                                 <Trash2 className="h-3.5 w-3.5" />
                                 Vymazat přepis
@@ -126,19 +131,19 @@ function TeamStat({
     isServing: boolean;
     accent: "blue" | "red";
 }) {
-    const borderColor = accent === "blue" ? "border-brand-blue/30" : "border-brand-red/30";
-    const bgColor = accent === "blue" ? "bg-brand-blue/5" : "bg-brand-red/5";
-
     return (
-        <div className={`rounded-lg border ${borderColor} ${bgColor} p-3`}>
-            <p className="break-words text-sm font-medium leading-snug">
-                {name}
-            </p>
-            <p className="mt-1 text-2xl font-bold tabular-nums xs:text-3xl">{points}</p>
+        <div
+            className={cn(
+                "rounded-lg p-3",
+                accent === "blue" ? "admin-stat-box--blue" : "admin-stat-box--red"
+            )}
+        >
+            <p className="break-words text-sm font-medium leading-snug text-white">{name}</p>
+            <p className="mt-1 text-2xl font-bold tabular-nums text-white xs:text-3xl">{points}</p>
             <div className="mt-1 flex flex-wrap items-center gap-2">
-                <span className="text-xs text-muted-foreground">Sety: {sets}</span>
+                <span className="admin-muted text-xs">Sety: {sets}</span>
                 {isServing && (
-                    <Badge className="bg-amber-400 text-xs text-black hover:bg-amber-400">
+                    <Badge className="border-0 bg-amber-400 text-xs text-black hover:bg-amber-400">
                         Servis
                     </Badge>
                 )}

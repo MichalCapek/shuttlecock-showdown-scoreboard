@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { ArrowUpDown, Pencil, RefreshCw, Users, User } from "lucide-react";
+import { ArrowLeft, ArrowRight, ArrowUpDown, Pencil, Users, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import type { CourtSide, CourtTrackerState, GameMode, PlayerSlot } from "@/types";
@@ -44,7 +44,7 @@ function PlayerChip({
             type="button"
             onClick={onClick}
             className={cn(
-                "pointer-events-auto inline-flex w-max items-start gap-0.5 rounded-md border bg-white/95 px-1 py-0.5 text-left shadow-sm transition-all active:scale-95",
+                "pointer-events-auto inline-flex w-max items-start gap-0.5 rounded-md border bg-white/95 px-1 py-0.5 text-left text-emerald-900 shadow-sm transition-all active:scale-95",
                 isServer
                     ? "border-amber-400 ring-2 ring-amber-400/60"
                     : "border-white/80 hover:bg-white"
@@ -125,17 +125,17 @@ export function CourtTrackerPanel({
     return (
         <div className="mx-2 mt-1.5 shrink-0 sm:mx-3 lg:mx-0">
             <div className="mb-1.5 flex items-center justify-between gap-1">
-                <span className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
-                    Sledování kurtu
-                </span>
+                <span className="admin-section-label">Sledování kurtu</span>
                 <div className="flex items-center gap-0.5">
                     <Button
                         variant={isSingles ? "default" : "outline"}
                         size="sm"
                         onClick={() => onSetGameMode("singles")}
                         className={cn(
-                            "min-h-[44px] gap-1 px-2 text-[10px]",
-                            isSingles && "bg-brand-blue hover:bg-brand-blue/90"
+                            "court-control-btn gap-1 px-2 text-[10px]",
+                            isSingles
+                                ? "bg-brand-blue hover:bg-brand-blue/90"
+                                : "admin-outline-btn"
                         )}
                     >
                         <User className="h-3 w-3" />
@@ -146,8 +146,10 @@ export function CourtTrackerPanel({
                         size="sm"
                         onClick={() => onSetGameMode("doubles")}
                         className={cn(
-                            "min-h-[44px] gap-1 px-2 text-[10px]",
-                            !isSingles && "bg-brand-blue hover:bg-brand-blue/90"
+                            "court-control-btn gap-1 px-2 text-[10px]",
+                            !isSingles
+                                ? "bg-brand-blue hover:bg-brand-blue/90"
+                                : "admin-outline-btn"
                         )}
                     >
                         <Users className="h-3 w-3" />
@@ -156,7 +158,7 @@ export function CourtTrackerPanel({
                 </div>
             </div>
 
-            <div className="relative mx-auto aspect-[134/61] w-full max-h-[6.5rem] overflow-hidden rounded-lg border-2 border-emerald-900/50 bg-gradient-to-b from-emerald-500 to-emerald-700 shadow-inner xs:max-h-[7.5rem] sm:max-h-[9rem] md:max-h-[10rem] lg:max-h-[12rem] xl:max-h-none">
+            <div className="relative mx-auto aspect-[134/61] w-full max-h-[6rem] overflow-hidden rounded-lg border-2 border-emerald-900/50 bg-gradient-to-b from-emerald-500 to-emerald-700 shadow-inner xs:max-h-[6.5rem] sm:max-h-[7.5rem] md:max-h-[8.5rem] lg:max-h-[10rem] xl:max-h-none">
                 <BadmintonCourtLines isSingles={isSingles} />
 
                 <div className="absolute left-1/2 top-1/2 z-10 -translate-x-1/2 -translate-y-1/2 rounded bg-white/90 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-emerald-800 shadow-sm">
@@ -228,16 +230,19 @@ export function CourtTrackerPanel({
                 <Button
                     size="sm"
                     onClick={onToggleServer}
-                    className="h-8 min-h-[44px] flex-1 gap-1 border-amber-400 bg-amber-400 px-1 text-[10px] text-black hover:bg-amber-500"
+                    className="court-control-btn flex-1 gap-1 border-amber-400 bg-amber-400 px-1 text-[10px] text-black hover:bg-amber-500"
                 >
-                    <RefreshCw className="h-3 w-3" />
+                    <span className="inline-flex items-center gap-0.5">
+                        <ArrowLeft className="h-3 w-3" />
+                        <ArrowRight className="h-3 w-3" />
+                    </span>
                     Servis
                 </Button>
                 <Button
                     variant="outline"
                     size="sm"
                     onClick={() => setShowEdit(true)}
-                    className="h-8 min-h-[44px] flex-1 gap-1 px-1 text-[10px]"
+                    className="admin-outline-btn court-control-btn flex-1 gap-1 px-1 text-[10px]"
                 >
                     <Pencil className="h-3 w-3" />
                     Jména hráčů

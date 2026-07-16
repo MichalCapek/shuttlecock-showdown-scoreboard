@@ -9,6 +9,7 @@ interface TeamBoxProps {
     isServer: boolean;
     accent?: "blue" | "red";
     compact?: boolean;
+    darkSurface?: boolean;
     onIncrement: () => void;
     onDecrement: () => void;
 }
@@ -20,6 +21,7 @@ export const TeamBox = ({
     isServer,
     accent = "blue",
     compact = false,
+    darkSurface = false,
     onIncrement,
     onDecrement,
 }: TeamBoxProps) => {
@@ -34,12 +36,21 @@ export const TeamBox = ({
             : "bg-brand-red hover:bg-brand-red/90";
 
     if (compact) {
+        const darkAccent =
+            accent === "blue"
+                ? "admin-team-box admin-team-box--blue"
+                : "admin-team-box admin-team-box--red";
+        const lightAccent =
+            accent === "blue"
+                ? "border-brand-blue/30 bg-gradient-to-b from-brand-blue/5 to-white"
+                : "border-brand-red/30 bg-gradient-to-b from-brand-red/5 to-white";
+
         return (
             <div
                 className={cn(
-                    "flex min-w-0 flex-1 flex-col rounded-xl border-2 p-1.5 xs:max-w-[11.5rem] sm:max-w-[12.5rem] lg:min-w-[12rem] lg:max-w-[14rem]",
-                    accentStyles,
-                    isServer && "ring-2 ring-amber-400/70 ring-offset-1"
+                    "flex min-w-0 flex-1 flex-col rounded-xl border-2 p-1 xs:max-w-[11.5rem] sm:max-w-[12.5rem] lg:min-w-[12rem] lg:max-w-[14rem]",
+                    darkSurface ? darkAccent : lightAccent,
+                    isServer && "ring-2 ring-amber-400/70 ring-offset-1 ring-offset-[#001428]"
                 )}
             >
                 <div className="shrink-0">
@@ -48,34 +59,36 @@ export const TeamBox = ({
                     </p>
                     <div className="flex flex-wrap items-center gap-1">
                         {setsWon !== undefined && (
-                            <span className="text-[10px] text-muted-foreground">
+                            <span className={cn("text-[10px]", darkSurface ? "admin-team-meta" : "text-muted-foreground")}>
                                 {setsWon} {setsWon === 1 ? "set" : "sety"}
                             </span>
                         )}
                         {isServer && (
-                            <span className="text-[10px] font-semibold text-amber-600">• Podává</span>
+                            <span className={cn("text-[10px] font-semibold", darkSurface ? "admin-team-serve" : "text-amber-600")}>
+                                • Podává
+                            </span>
                         )}
                     </div>
                 </div>
 
-                <div className="flex items-center justify-center py-1">
+                <div className="flex items-center justify-center py-0.5">
                     <span className="text-[clamp(2rem,10vw,3rem)] font-bold tabular-nums leading-none sm:text-5xl">
                         {scoreValue}
                     </span>
                 </div>
 
-                <div className="grid shrink-0 grid-cols-2 gap-1.5">
+                <div className="grid shrink-0 grid-cols-2 gap-1">
                     <Button
                         onClick={onDecrement}
                         variant="outline"
-                        className="min-h-[44px]"
+                        className={cn("court-control-btn", darkSurface && "admin-outline-btn border-white/25")}
                         aria-label="Snížit skóre"
                     >
                         <Minus className="h-4 w-4" />
                     </Button>
                     <Button
                         onClick={onIncrement}
-                        className={cn("min-h-[44px]", incrementStyles)}
+                        className={cn("court-control-btn", incrementStyles)}
                         aria-label="Zvýšit skóre"
                     >
                         <Plus className="h-4 w-4" />

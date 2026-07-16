@@ -385,6 +385,52 @@ body.stream-overlay {
   object-fit: contain;
 }
 
+/* Single-court hall display (/court/court*) – arena broadcast aesthetic */
+.court-view-team-card {
+  container-type: inline-size;
+}
+
+.court-view-team-name {
+  font-size: clamp(1.25rem, 4.5vw, 3.5rem);
+  font-weight: 800;
+  line-height: 1.15;
+  color: rgba(255, 255, 255, 0.95);
+  text-shadow: 0 2px 0 rgba(0, 0, 0, 0.45);
+  overflow-wrap: break-word;
+  text-wrap: pretty;
+}
+
+.court-view-score {
+  width: 100%;
+  max-width: 100%;
+  font-size: clamp(3.5rem, 22vw, 9rem);
+  font-weight: 900;
+  line-height: 0.85;
+  letter-spacing: -0.04em;
+  font-variant-numeric: tabular-nums;
+  color: #ffffff;
+  text-shadow:
+    0 4px 0 rgba(0, 0, 0, 0.6),
+    0 0 60px rgba(255, 255, 255, 0.18);
+  overflow: hidden;
+}
+
+.court-view-service-badge {
+  font-size: clamp(0.65rem, 2vmin, 0.875rem);
+}
+
+.court-view .court-view-service-slot {
+  min-height: clamp(2.5rem, 6vmin, 4rem);
+}
+
+.court-view-vs {
+  font-size: clamp(1rem, 3vw, 1.5rem);
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  color: rgba(255, 255, 255, 0.35);
+  text-transform: uppercase;
+}
+
 .scoreboard-shimmer-bar {
   background: linear-gradient(
     90deg,
@@ -394,6 +440,258 @@ body.stream-overlay {
   );
   background-size: 200% 100%;
   animation: scoreboard-shimmer 4s linear infinite;
+}
+
+/* Admin – arena broadcast theme (aligned with root dashboard) */
+.admin-shell {
+  background-color: #001428;
+  background-image:
+    radial-gradient(ellipse 80% 50% at 15% 0%, rgba(0, 74, 144, 0.45) 0%, transparent 55%),
+    radial-gradient(ellipse 70% 45% at 85% 100%, rgba(227, 22, 27, 0.35) 0%, transparent 55%),
+    repeating-linear-gradient(
+      135deg,
+      transparent,
+      transparent 48px,
+      rgba(255, 255, 255, 0.018) 48px,
+      rgba(255, 255, 255, 0.018) 49px
+    );
+  color: #ffffff;
+}
+
+.admin-accent-rail {
+  height: 3px;
+  background: linear-gradient(to right, #004a90, rgba(255, 255, 255, 0.4), #e3161b);
+}
+
+.admin-header {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
+}
+
+.admin-nav-link {
+  color: rgba(255, 255, 255, 0.55);
+  transition: color 0.15s, background-color 0.15s;
+}
+
+.admin-nav-link:hover {
+  color: #ffffff;
+  background-color: rgba(255, 255, 255, 0.08);
+}
+
+.admin-nav-link--active {
+  color: #ffffff;
+  background-color: rgba(0, 74, 144, 0.45);
+}
+
+.admin-page-title {
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: -0.02em;
+}
+
+.admin-page-desc {
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.admin-card {
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  background: rgba(255, 255, 255, 0.04) !important;
+  color: #ffffff;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.admin-card-title {
+  color: #ffffff;
+}
+
+.admin-card-desc {
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.admin-fieldset-legend {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.admin-label {
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.admin-input {
+  border-color: rgba(255, 255, 255, 0.2) !important;
+  background: rgba(0, 0, 0, 0.25) !important;
+  color: #ffffff !important;
+}
+
+.admin-input::placeholder {
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.admin-muted {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.admin-separator {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.admin-panel {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 0.75rem;
+}
+
+.admin-panel-inset {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 0.5rem;
+}
+
+.admin-section-label {
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.admin-badge {
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.admin-badge-set {
+  border-color: rgba(0, 74, 144, 0.5);
+  background: rgba(0, 74, 144, 0.25);
+  color: #93c5fd;
+}
+
+.admin-stat-box--blue {
+  border: 1px solid rgba(0, 74, 144, 0.45);
+  background: rgba(0, 74, 144, 0.2);
+}
+
+.admin-stat-box--red {
+  border: 1px solid rgba(227, 22, 27, 0.45);
+  background: rgba(227, 22, 27, 0.2);
+}
+
+.admin-danger-card {
+  border-color: rgba(227, 22, 27, 0.45) !important;
+  background: rgba(227, 22, 27, 0.1) !important;
+}
+
+.admin-danger-title {
+  color: #fca5a5;
+}
+
+.admin-sticky-save {
+  background: rgba(0, 20, 40, 0.92);
+  backdrop-filter: blur(8px);
+}
+
+.admin-dialog {
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  background: #001428 !important;
+  color: #ffffff !important;
+}
+
+.admin-dialog [class*="DialogDescription"],
+.admin-dialog [class*="AlertDialogDescription"] {
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.admin-outline-btn {
+  border-color: rgba(255, 255, 255, 0.25) !important;
+  background: transparent !important;
+  color: #ffffff !important;
+}
+
+.admin-outline-btn:hover {
+  background: rgba(255, 255, 255, 0.08) !important;
+}
+
+.admin-ghost-btn {
+  color: rgba(255, 255, 255, 0.75) !important;
+}
+
+.admin-ghost-btn:hover {
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: #ffffff !important;
+}
+
+.court-control-shell {
+  background-color: #001428;
+  background-image:
+    radial-gradient(ellipse 80% 50% at 15% 0%, rgba(0, 74, 144, 0.35) 0%, transparent 55%),
+    radial-gradient(ellipse 70% 45% at 85% 100%, rgba(227, 22, 27, 0.25) 0%, transparent 55%);
+  color: #ffffff;
+}
+
+.court-control-inner {
+  background: transparent;
+}
+
+.court-control-actions {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(10px);
+}
+
+.court-control .court-control-btn {
+  min-height: 2rem !important;
+  height: 2rem !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+.court-control .court-control-nav-btn {
+  min-height: 2.25rem !important;
+  height: 2.25rem !important;
+  min-width: 2.25rem;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+.admin-set-past {
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.admin-set-current {
+  border-radius: 0.25rem;
+  background: rgba(0, 74, 144, 0.45);
+  color: #ffffff;
+  box-shadow: 0 0 8px rgba(0, 74, 144, 0.3);
+}
+
+.admin-team-box {
+  border-color: rgba(255, 255, 255, 0.2) !important;
+  background: rgba(0, 0, 0, 0.25) !important;
+  color: #ffffff;
+}
+
+.admin-team-box--blue {
+  border-color: rgba(0, 74, 144, 0.5) !important;
+  background: rgba(0, 74, 144, 0.25) !important;
+}
+
+.admin-team-box--red {
+  border-color: rgba(227, 22, 27, 0.5) !important;
+  background: rgba(227, 22, 27, 0.25) !important;
+}
+
+.admin-team-box .admin-team-meta {
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.admin-team-box .admin-team-serve {
+  color: #fcd34d;
 }
 
 /* Court umpire control – lock to viewport, no scroll */

@@ -69,9 +69,9 @@ export function CourtTrackerEditDialog({
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="max-h-[90dvh] overflow-y-auto sm:max-w-md">
+            <DialogContent className="admin-dialog max-h-[90dvh] overflow-y-auto sm:max-w-md">
                 <DialogHeader>
-                    <DialogTitle>Jména hráčů na kurtu</DialogTitle>
+                    <DialogTitle className="text-white">Jména hráčů na kurtu</DialogTitle>
                     <DialogDescription>
                         Jména se ukládají pouze v tomto zařízení. V dvouhře stačí zadat levého a pravého hráče.
                     </DialogDescription>
@@ -80,13 +80,14 @@ export function CourtTrackerEditDialog({
                 <div className="space-y-3 py-2">
                     {visibleSlots.map((slot) => (
                         <div key={slot} className="space-y-1">
-                            <Label htmlFor={`player-${slot}`} className="text-xs">
+                            <Label htmlFor={`player-${slot}`} className="admin-label text-xs">
                                 {isSingles && (slot === "leftTop" || slot === "rightTop")
                                     ? SINGLES_LABELS[slot]
                                     : SLOT_LABELS[slot]}
                             </Label>
                             <Input
                                 id={`player-${slot}`}
+                                className="admin-input"
                                 value={players[slot]}
                                 onChange={(e) =>
                                     setPlayers((p) => ({ ...p, [slot]: e.target.value }))
@@ -98,7 +99,7 @@ export function CourtTrackerEditDialog({
                 </div>
 
                 <DialogFooter className="gap-2 sm:gap-0">
-                    <Button variant="outline" onClick={() => onOpenChange(false)}>
+                    <Button variant="outline" onClick={() => onOpenChange(false)} className="admin-outline-btn">
                         Zrušit
                     </Button>
                     <Button onClick={handleSave} className="bg-brand-blue hover:bg-brand-blue/90">

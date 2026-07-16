@@ -29,10 +29,8 @@ function NavButton({
     external?: boolean;
 }) {
     const className = cn(
-        "flex min-h-[44px] min-w-[2.75rem] flex-col items-center justify-center gap-0.5 rounded-md px-1 py-1 text-[9px] font-medium leading-none transition-colors xs:text-[10px]",
-        active
-            ? "bg-brand-blue/10 text-brand-blue"
-            : "text-muted-foreground hover:bg-muted hover:text-foreground"
+        "admin-nav-link court-control-nav-btn flex flex-col items-center justify-center gap-0.5 rounded-md px-1 text-[9px] font-medium leading-none xs:text-[10px]",
+        active && "admin-nav-link--active"
     );
 
     const content = (
@@ -71,16 +69,20 @@ export function CourtControlShell({
         exact ? location.pathname === href : location.pathname === href;
 
     return (
-        <div className="court-control min-h-dvh bg-slate-50 pt-[env(safe-area-inset-top)] lg:bg-slate-100">
-            <div className="mx-auto flex h-dvh max-h-dvh w-full flex-col overflow-hidden bg-slate-50 md:max-w-md md:border-x md:border-border/60 md:shadow-lg lg:max-w-none lg:border-x-0 lg:shadow-none">
-                <header className="flex shrink-0 items-center justify-between gap-1 border-b border-border/60 bg-white px-2 py-1 xs:gap-2 sm:px-3 lg:px-6 xl:px-8">
+        <div className="court-control court-control-shell min-h-dvh pt-[env(safe-area-inset-top)]">
+            <div className="court-control-inner mx-auto flex h-dvh max-h-dvh w-full flex-col overflow-hidden md:max-w-md lg:max-w-none">
+                <div className="admin-accent-rail shrink-0" />
+
+                <header className="admin-header flex shrink-0 items-center justify-between gap-1 px-2 py-1 xs:gap-2 sm:px-3 lg:px-6 xl:px-8">
                     <div className="flex min-w-0 items-center gap-1.5 xs:gap-2">
-                        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-brand-blue to-brand-red p-1">
+                        <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-brand-blue to-brand-red p-1 shadow-lg">
                             <img src={shuttlecock} alt="" className="h-full w-full object-contain brightness-0 invert" />
                         </div>
                         <div className="flex items-center gap-1 text-xs font-semibold xs:gap-1.5">
-                            <span className="rounded-md bg-muted px-1.5 py-1 xs:px-2">Set {currentSet}</span>
-                            <span className="tabular-nums text-muted-foreground">
+                            <span className="admin-badge admin-badge-set rounded-md px-1.5 py-0.5 xs:px-2">
+                                Set {currentSet}
+                            </span>
+                            <span className="tabular-nums text-white/60">
                                 {setsA}–{setsB}
                             </span>
                         </div>
@@ -96,12 +98,7 @@ export function CourtControlShell({
                                 active={isActive(href, exact)}
                             />
                         ))}
-                        <NavButton
-                            href="/"
-                            label="Náhled"
-                            icon={ExternalLink}
-                            external
-                        />
+                        <NavButton href="/" label="Náhled" icon={ExternalLink} external />
                     </nav>
                 </header>
 
@@ -115,7 +112,7 @@ export function CourtControlShell({
                     <div className="min-h-0 flex-1" />
                 )}
 
-                <div className="court-control-actions shrink-0 border-t border-border/60 bg-white px-2 lg:px-6 xl:px-8">
+                <div className="court-control-actions shrink-0 px-2 lg:px-6 xl:px-8">
                     {actionBar}
                 </div>
             </div>

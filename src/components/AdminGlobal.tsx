@@ -139,7 +139,7 @@ export default function AdminGlobal() {
     }
 
     if (matchLoading || !draft) {
-        return <LoadingScreen />;
+        return <LoadingScreen variant="scoreboard" />;
     }
 
     return (
@@ -148,69 +148,73 @@ export default function AdminGlobal() {
             description="Nastavení turnaje, celkového skóre a přehled kurtů"
         >
             <div className="grid gap-6 lg:grid-cols-2">
-                <Card>
+                <Card className="admin-card">
                     <CardHeader>
-                        <CardTitle>Nastavení zápasu</CardTitle>
-                        <CardDescription>
+                        <CardTitle className="admin-card-title">Nastavení zápasu</CardTitle>
+                        <CardDescription className="admin-card-desc">
                             Informace zobrazené na scoreboardu
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-6">
                         <fieldset className="space-y-4">
-                            <legend className="text-sm font-semibold text-muted-foreground">
-                                Turnaj
-                            </legend>
+                            <legend className="admin-fieldset-legend">Turnaj</legend>
                             <div className="space-y-2">
-                                <Label htmlFor="title">Název turnaje</Label>
+                                <Label htmlFor="title" className="admin-label">Název turnaje</Label>
                                 <Input
                                     id="title"
+                                    className="admin-input"
                                     value={draft.title}
                                     onChange={(e) => handleInputChange("title", e.target.value)}
                                 />
                             </div>
                             <div className="space-y-2">
-                                <Label htmlFor="round">Kolo</Label>
+                                <Label htmlFor="round" className="admin-label">Kolo</Label>
                                 <Input
                                     id="round"
+                                    className="admin-input"
                                     value={draft.round}
                                     onChange={(e) => handleInputChange("round", e.target.value)}
                                 />
                             </div>
                         </fieldset>
 
-                        <Separator />
+                        <Separator className="admin-separator" />
 
                         <fieldset className="space-y-4">
-                            <legend className="text-sm font-semibold text-muted-foreground">
-                                Týmy
-                            </legend>
+                            <legend className="admin-fieldset-legend">Týmy</legend>
                             <div className="space-y-2">
-                                <Label htmlFor="teamA">Tým A (domácí)</Label>
+                                <Label htmlFor="teamA" className="admin-label">Tým A (domácí)</Label>
                                 <Input
                                     id="teamA"
+                                    className="admin-input"
                                     value={draft.teamAName}
                                     onChange={(e) => handleInputChange("teamAName", e.target.value)}
                                 />
                             </div>
                             <div className="space-y-2">
-                                <Label htmlFor="teamB">Tým B (hosté)</Label>
+                                <Label htmlFor="teamB" className="admin-label">Tým B (hosté)</Label>
                                 <Input
                                     id="teamB"
+                                    className="admin-input"
                                     value={draft.teamBName}
                                     onChange={(e) => handleInputChange("teamBName", e.target.value)}
                                 />
                             </div>
                             <div className="space-y-2">
-                                <Label htmlFor="awayLogo">Logo B (název souboru)</Label>
+                                <Label htmlFor="awayLogo" className="admin-label">Logo B (název souboru)</Label>
                                 <Input
                                     id="awayLogo"
+                                    className="admin-input"
                                     value={draft.awayLogo || ""}
                                     onChange={(e) => handleInputChange("awayLogo", e.target.value)}
                                     placeholder="např. KLI_logo.png"
                                 />
-                                <p className="text-xs text-muted-foreground">
+                                <p className="admin-muted text-xs">
                                     Soubor musí být ve složce{" "}
-                                    <code className="rounded bg-muted px-1">assets/</code>. Dostupné:{" "}
+                                    <code className="rounded border border-white/15 bg-white/10 px-1">
+                                        assets/
+                                    </code>
+                                    . Dostupné:{" "}
                                     {getAvailableAwayLogos()
                                         .filter((name) => !name.includes("benatky") && name !== "shuttlecock.png")
                                         .join(", ")}
@@ -218,17 +222,16 @@ export default function AdminGlobal() {
                             </div>
                         </fieldset>
 
-                        <Separator />
+                        <Separator className="admin-separator" />
 
                         <fieldset className="space-y-4">
-                            <legend className="text-sm font-semibold text-muted-foreground">
-                                Celkové skóre utkání
-                            </legend>
+                            <legend className="admin-fieldset-legend">Celkové skóre utkání</legend>
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="space-y-2">
-                                    <Label htmlFor="overallA">Skóre A</Label>
+                                    <Label htmlFor="overallA" className="admin-label">Skóre A</Label>
                                     <Input
                                         id="overallA"
+                                        className="admin-input"
                                         type="number"
                                         min={0}
                                         value={draft.overallScoreA}
@@ -238,9 +241,10 @@ export default function AdminGlobal() {
                                     />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label htmlFor="overallB">Skóre B</Label>
+                                    <Label htmlFor="overallB" className="admin-label">Skóre B</Label>
                                     <Input
                                         id="overallB"
+                                        className="admin-input"
                                         type="number"
                                         min={0}
                                         value={draft.overallScoreB}
@@ -252,7 +256,7 @@ export default function AdminGlobal() {
                             </div>
                         </fieldset>
 
-                        <div className="sticky bottom-[max(0.75rem,env(safe-area-inset-bottom))] z-10 -mx-1 bg-card/95 px-1 py-2 backdrop-blur-sm sm:static sm:mx-0 sm:bg-transparent sm:p-0 sm:backdrop-blur-none">
+                        <div className="admin-sticky-save sticky bottom-[max(0.75rem,env(safe-area-inset-bottom))] z-10 -mx-1 px-1 py-2 sm:static sm:mx-0 sm:bg-transparent sm:p-0 sm:backdrop-blur-none">
                             <Button
                                 onClick={handleSubmit}
                                 disabled={saving}
@@ -285,10 +289,10 @@ export default function AdminGlobal() {
                         onClearOverrides={() => handleClearOverrides(COURT_IDS.COURT_2)}
                     />
 
-                    <Card className="border-destructive/30">
+                    <Card className="admin-card admin-danger-card">
                         <CardHeader className="pb-3">
-                            <CardTitle className="text-base text-destructive">Nebezpečná zóna</CardTitle>
-                            <CardDescription>
+                            <CardTitle className="admin-danger-title text-base">Nebezpečná zóna</CardTitle>
+                            <CardDescription className="admin-card-desc">
                                 Resetuje skóre, sety a historii na obou kurtách
                             </CardDescription>
                         </CardHeader>

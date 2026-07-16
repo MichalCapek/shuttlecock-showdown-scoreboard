@@ -20,19 +20,19 @@ export function CourtTimerPanel() {
     const isInterval = mode === "interval";
 
     return (
-        <div className="mx-2 mb-1.5 mt-4 shrink-0 border-t border-border/50 pt-3 xs:mx-3 sm:mt-5 lg:mx-0 lg:mt-0 lg:border-t-0 lg:pt-0">
+        <div className="mx-2 mb-1.5 mt-3 shrink-0 border-t border-white/10 pt-2 xs:mx-3 sm:mt-4 lg:mx-0 lg:mt-0 lg:border-t-0 lg:pt-0">
             <div className="mb-1 flex items-center justify-between gap-1">
-                <span className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
-                    Časovač
-                </span>
+                <span className="admin-section-label">Časovač</span>
                 <div className="flex items-center gap-0.5">
                     <Button
                         variant={isInterval ? "default" : "outline"}
                         size="sm"
                         onClick={() => switchMode("interval")}
                         className={cn(
-                            "min-h-[44px] gap-0.5 px-1.5 text-[9px] xs:text-[10px]",
-                            isInterval && "bg-brand-blue hover:bg-brand-blue/90"
+                            "court-control-btn gap-0.5 px-1.5 text-[9px] xs:text-[10px]",
+                            isInterval
+                                ? "bg-brand-blue hover:bg-brand-blue/90"
+                                : "admin-outline-btn"
                         )}
                     >
                         <Timer className="h-2.5 w-2.5" />
@@ -43,8 +43,10 @@ export function CourtTimerPanel() {
                         size="sm"
                         onClick={() => switchMode("injury")}
                         className={cn(
-                            "min-h-[44px] gap-0.5 px-1.5 text-[9px] xs:text-[10px]",
-                            !isInterval && "bg-brand-blue hover:bg-brand-blue/90"
+                            "court-control-btn gap-0.5 px-1.5 text-[9px] xs:text-[10px]",
+                            !isInterval
+                                ? "bg-brand-blue hover:bg-brand-blue/90"
+                                : "admin-outline-btn"
                         )}
                     >
                         <Clock className="h-2.5 w-2.5" />
@@ -53,12 +55,12 @@ export function CourtTimerPanel() {
                 </div>
             </div>
 
-            <div className="rounded-lg border border-border/60 bg-white px-2 py-1.5 shadow-sm">
+            <div className="admin-panel-inset px-2 py-1">
                 <div className="flex items-center gap-1.5">
                     <div
                         className={cn(
-                            "min-w-[4rem] text-center font-mono text-xl font-bold tabular-nums leading-none xs:min-w-[4.5rem] xs:text-2xl",
-                            finished ? "text-amber-600" : "text-foreground"
+                            "min-w-[4rem] text-center font-mono text-xl font-bold tabular-nums leading-none text-white xs:min-w-[4.5rem] xs:text-2xl",
+                            finished && "text-amber-400"
                         )}
                     >
                         {formatTimerDisplay(seconds)}
@@ -75,8 +77,10 @@ export function CourtTimerPanel() {
                                         disabled={isRunning}
                                         onClick={() => applyPreset(value)}
                                         className={cn(
-                                            "min-h-[44px] min-w-0 flex-1 px-1 text-[9px] xs:text-[10px]",
-                                            preset === value && "bg-brand-blue hover:bg-brand-blue/90"
+                                            "court-control-btn min-w-0 flex-1 px-1 text-[9px] xs:text-[10px]",
+                                            preset === value
+                                                ? "bg-brand-blue hover:bg-brand-blue/90"
+                                                : "admin-outline-btn"
                                         )}
                                     >
                                         {value}s
@@ -90,7 +94,7 @@ export function CourtTimerPanel() {
                                 onClick={toggle}
                                 disabled={isInterval && seconds === 0 && !isRunning}
                                 className={cn(
-                                    "min-h-[44px] flex-1 gap-1 text-[10px] font-semibold",
+                                    "court-control-btn flex-1 gap-1 text-[10px] font-semibold",
                                     isRunning
                                         ? "bg-amber-400 text-black hover:bg-amber-500"
                                         : "bg-brand-blue hover:bg-brand-blue/90"
@@ -112,7 +116,7 @@ export function CourtTimerPanel() {
                                 variant="outline"
                                 size="sm"
                                 onClick={reset}
-                                className="min-h-[44px] min-w-[2.75rem] px-0"
+                                className="admin-outline-btn court-control-btn min-w-[2.25rem] px-0"
                                 aria-label="Resetovat časovač"
                             >
                                 <RotateCcw className="h-3 w-3" />

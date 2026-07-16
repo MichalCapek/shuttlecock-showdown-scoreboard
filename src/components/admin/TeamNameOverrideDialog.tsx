@@ -37,31 +37,31 @@ export function TeamNameOverrideDialog({
 }: TeamNameOverrideDialogProps) {
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="max-h-[90dvh] overflow-y-auto sm:max-w-md">
+            <DialogContent className="admin-dialog max-h-[90dvh] overflow-y-auto sm:max-w-md">
                 <DialogHeader>
-                    <DialogTitle>{title}</DialogTitle>
+                    <DialogTitle className="text-white">{title}</DialogTitle>
                     {description && <DialogDescription>{description}</DialogDescription>}
                 </DialogHeader>
 
                 <div className="space-y-4 py-2">
                     <div className="space-y-2">
-                        <Label htmlFor="override-team-a">Tým A</Label>
+                        <Label htmlFor="override-team-a" className="admin-label">Tým A</Label>
                         <Input
                             id="override-team-a"
+                            className="admin-input min-h-[44px] text-base"
                             value={teamAName}
                             onChange={(e) => onTeamAChange(e.target.value)}
                             placeholder="Ponechte prázdné pro výchozí jméno"
-                            className="min-h-[44px] text-base"
                         />
                     </div>
                     <div className="space-y-2">
-                        <Label htmlFor="override-team-b">Tým B</Label>
+                        <Label htmlFor="override-team-b" className="admin-label">Tým B</Label>
                         <Input
                             id="override-team-b"
+                            className="admin-input min-h-[44px] text-base"
                             value={teamBName}
                             onChange={(e) => onTeamBChange(e.target.value)}
                             placeholder="Ponechte prázdné pro výchozí jméno"
-                            className="min-h-[44px] text-base"
                         />
                     </div>
                 </div>
@@ -81,7 +81,7 @@ export function TeamNameOverrideDialog({
                         <Button
                             variant="outline"
                             onClick={() => onOpenChange(false)}
-                            className="min-h-[44px] w-full xs:w-auto"
+                            className="admin-outline-btn min-h-[44px] w-full xs:w-auto"
                         >
                             Zrušit
                         </Button>
