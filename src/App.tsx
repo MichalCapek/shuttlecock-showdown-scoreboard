@@ -5,6 +5,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { LoadingScreen } from "@/components/LoadingScreen";
 import Index from "@/pages/Index";
+import DashboardV1 from "@/pages/DashboardV1";
 import NotFound from "@/pages/NotFound";
 
 const AdminCourt = lazy(() => import("@/components/AdminCourt"));
@@ -22,6 +23,7 @@ const App = () => {
                         <Suspense fallback={<LoadingScreen />}>
                             <Routes>
                                 <Route path="/" element={<Index />} />
+                                <Route path="/dashboard/v1" element={<DashboardV1 />} />
                                 <Route path="/admin/:courtId" element={<AdminCourt />} />
                                 <Route path="/admin" element={<AdminGlobal />} />
                                 <Route path="/stream/:courtId" element={<StreamOverlay />} />

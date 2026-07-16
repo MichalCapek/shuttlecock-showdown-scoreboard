@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Trophy } from "lucide-react";
 
 interface OverallMatchProps {
     title: string;
@@ -28,22 +29,17 @@ const OverallMatch = ({ title, round }: OverallMatchProps) => {
     }, []);
 
     return (
-        <div className="flex w-full items-center justify-between gap-3 px-1 sm:px-2">
-            <div className="flex min-w-0 flex-1 items-center gap-2">
-                <span className="scoreboard-live-dot relative hidden h-2 w-2 shrink-0 sm:inline-flex">
-                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-brand-red opacity-60" />
-                    <span className="relative inline-flex h-2 w-2 rounded-full bg-brand-red" />
-                </span>
-                <h1 className="truncate text-sm font-extrabold uppercase tracking-wide text-white sm:text-base md:text-lg lg:text-xl">
-                    {title}
-                    <span className="mx-1.5 font-normal text-white/40">·</span>
-                    <span className="text-white/70">{round}</span>
+        <div className="flex w-full flex-col items-center gap-1 px-3 py-2 xs:px-4 sm:flex-row sm:justify-between sm:gap-4 sm:px-6 sm:py-3">
+            <div className="flex w-full items-center justify-center gap-2 sm:w-auto sm:justify-start sm:gap-3 md:gap-4">
+                <Trophy className="h-5 w-5 shrink-0 text-brand-red xs:h-6 xs:w-6 md:h-8 md:w-8" />
+                <h1 className="text-center text-sm font-bold leading-tight text-white drop-shadow-md xs:text-base sm:text-left sm:text-xl md:text-2xl">
+                    {title} – {round}
                 </h1>
             </div>
 
             <time
                 dateTime={currentTime}
-                className="shrink-0 text-xs font-semibold tabular-nums text-white/60 sm:text-sm"
+                className="text-xs font-semibold tabular-nums text-white/90 drop-shadow-md xs:text-sm sm:text-lg md:text-xl md:font-bold md:text-white"
             >
                 {currentTime}
             </time>

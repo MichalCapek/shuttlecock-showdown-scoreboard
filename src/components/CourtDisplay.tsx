@@ -1,5 +1,6 @@
 import type { CourtData } from "@/types";
 import { TeamScoreBox } from "@/components/TeamScoreBox";
+import { cn } from "@/lib/utils";
 
 interface CourtDisplayProps {
     courtNumber: number;
@@ -7,30 +8,40 @@ interface CourtDisplayProps {
 }
 
 const CourtDisplay = ({ courtNumber, data }: CourtDisplayProps) => {
-    const pastSetsDisplay = data.pastSets?.length
-        ? data.pastSets.map((set) => `${set.teamA}:${set.teamB}`).join(", ")
-        : null;
+    const accent = courtNumber === 1 ? "blue" : "red";
 
     return (
-        <div className="flex h-full min-h-0 flex-col py-3 xs:py-4 sm:py-5 md:py-6">
-            <div className="mb-2 shrink-0 text-center sm:mb-3 md:mb-4">
-                <h2 className="mb-0.5 text-xl font-bold text-white xs:text-2xl sm:text-3xl md:text-4xl">
-                    KURT {courtNumber}
-                </h2>
-                <p className="text-xs font-medium uppercase tracking-wider text-white/70 xs:text-sm sm:text-base">
-                    Set {data.currentSet}
-                </p>
-                <div className="mt-1 min-h-[1.25rem] text-sm font-medium text-white/90 xs:min-h-[1.5rem] xs:text-base sm:mt-2 sm:min-h-[2rem] sm:text-lg md:text-xl lg:text-2xl">
-                    {pastSetsDisplay}
+        <div className="flex h-full min-h-0 flex-col px-2 py-2 sm:px-3 sm:py-3">
+            <div className="mb-1 flex shrink-0 flex-col gap-1 sm:mb-2">
+                <div className="flex min-w-0 items-center gap-2 sm:gap-3">
+                    <span
+                        className={cn(
+                            "shrink-0 text-xs font-bold uppercase tracking-wider sm:text-sm md:text-base",
+                            accent === "blue" ? "text-sky-300" : "text-red-300"
+                        )}
+                    >
+                        Kurt {courtNumber}
+                    </span>
+                    <span className="text-xs text-white/50 sm:text-sm md:text-base">
+                        Set {data.currentSet}
+                    </span>
+                </div>
+
+                <div className="scoreboard-past-sets-slot flex flex-wrap items-center gap-2 sm:gap-3">
+                    {data.pastSets?.map((set, index) => (
+                        <span
+                            key={index}
+                            className="scoreboard-tv-past-set rounded-lg border border-white/20 bg-white/10 px-2 py-1 sm:px-3 sm:py-1.5"
+                        >
+                            {set.teamA}:{set.teamB}
+                        </span>
+                    ))}
                 </div>
             </div>
 
-            <div className="flex min-h-0 flex-1 flex-row items-center justify-center gap-2 px-1 xs:gap-3 sm:gap-4 md:gap-6 lg:gap-8 xl:gap-12">
-                <TeamScoreBox team={data.homeTeam} isServer={data.server === "home"} />
-                <span className="shrink-0 select-none text-base font-bold text-white/60 xs:text-lg sm:text-xl md:text-2xl">
-                    vs
-                </span>
-                <TeamScoreBox team={data.awayTeam} isServer={data.server === "away"} />
+            <div className="flex min-h-0 flex-1 flex-row items-stretch gap-1 sm:gap-2 md:gap-3">
+                <TeamScoreBox team={data.homeTeam} isServer={data.server === "home"} accent={accent} />
+                <TeamScoreBox team={data.awayTeam} isServer={data.server === "away"} accent={accent} />
             </div>
         </div>
     );

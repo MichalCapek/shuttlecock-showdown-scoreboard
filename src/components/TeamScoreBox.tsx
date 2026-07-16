@@ -1,46 +1,57 @@
-import { Badge } from "@/components/ui/badge";
 import ShuttlecockIcon from "../../assets/shuttlecock.png";
 import type { TeamData } from "@/types";
-import { BRAND_COLORS } from "@/constants";
 import { cn } from "@/lib/utils";
 
 interface TeamScoreBoxProps {
     team: TeamData;
     isServer: boolean;
+    accent?: "blue" | "red";
 }
 
-export const TeamScoreBox = ({ team, isServer }: TeamScoreBoxProps) => {
-    const bgColor = isServer ? BRAND_COLORS.WHITE_TRANSPARENT : BRAND_COLORS.BLUE_TRANSPARENT;
-
+export const TeamScoreBox = ({ team, isServer, accent = "blue" }: TeamScoreBoxProps) => {
     return (
         <div
             className={cn(
-                "min-w-0 flex-1 rounded-xl border-2 p-1 transition-all duration-300 xs:p-1.5 sm:rounded-2xl sm:border-4 sm:p-2 md:p-2.5 lg:p-3",
-                isServer ? "border-white shadow-lg shadow-white/20" : "border-white/30"
+                "team-score-box flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-lg border-2 sm:rounded-xl",
+                isServer
+                    ? cn(
+                          "border-white shadow-[0_0_24px_rgba(255,255,255,0.2)]",
+                          accent === "blue" ? "bg-brand-blue/50" : "bg-brand-red/50"
+                      )
+                    : "border-white/20 bg-black/20"
             )}
-            style={{ backgroundColor: bgColor }}
         >
-            <div className="flex flex-col items-center">
-                <div className="flex w-full min-h-0 flex-col justify-center text-center">
-                    <h3 className="mb-1 min-h-[2.4em] break-words text-sm font-bold leading-tight text-white xs:text-base sm:mb-1.5 sm:text-lg md:mb-2 md:text-xl lg:text-2xl xl:text-3xl">
-                        {team.shortName}
-                    </h3>
-                    <div className="text-[clamp(1.75rem,9vw,6rem)] font-bold tabular-nums leading-none text-white sm:text-[clamp(2rem,10vw,5rem)] lg:text-[clamp(2.5rem,7vw,8rem)]">
-                        {team.score}
-                    </div>
+            <div className="flex min-h-0 flex-1 flex-col items-center justify-center px-1.5 py-2 text-center xs:px-2 sm:px-4 sm:py-4 md:px-5 md:py-5">
+                <p className="scoreboard-tv-team-name-court mb-2 w-full shrink-0 break-words leading-tight sm:mb-3">
+                    {team.shortName}
+                </p>
+
+                <div
+                    className={cn(
+                        "scoreboard-tv-court-score flex flex-1 items-center justify-center",
+                        isServer && "scoreboard-tv-court-score--serving"
+                    )}
+                >
+                    {team.score}
                 </div>
-                <div className="mt-0.5 flex min-h-[1rem] items-center justify-center sm:mt-1 sm:min-h-[1.5rem] md:min-h-[2rem]">
+
+                <div className="scoreboard-service-slot flex w-full shrink-0 items-center justify-center">
                     {isServer && (
-                        <>
+                        <div
+                            className={cn(
+                                "flex items-center gap-1.5 rounded-md px-2 py-0.5 sm:gap-2 sm:px-2.5 sm:py-1",
+                                accent === "blue" ? "bg-brand-blue" : "bg-brand-red"
+                            )}
+                        >
                             <img
                                 src={ShuttlecockIcon}
                                 alt="servis"
-                                className="h-4 w-4 opacity-80 sm:hidden"
+                                className="h-3.5 w-3.5 sm:h-4 sm:w-4 md:h-5 md:w-5"
                             />
-                            <Badge className="hidden bg-brand-red px-1.5 py-0.5 text-xs text-white sm:inline-flex sm:px-2 sm:py-0.5 sm:text-sm md:px-3 md:py-1">
-                                SERVIS
-                            </Badge>
-                        </>
+                            <span className="text-[10px] font-bold uppercase tracking-wider text-white sm:text-xs md:text-sm">
+                                Servis
+                            </span>
+                        </div>
                     )}
                 </div>
             </div>

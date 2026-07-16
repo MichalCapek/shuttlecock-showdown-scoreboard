@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import benatkyLogo from "../../assets/benatky_logo.gif";
 import CRProjectLogo from "../../assets/CR_Project_logo_new.png";
 import victorLogo from "../../assets/victor-logo.png";
+import { cn } from "@/lib/utils";
 
 const SPONSORS = [
     { name: "Město Benátky", logo: benatkyLogo },
@@ -23,26 +24,21 @@ const SponsorArea = () => {
     }, []);
 
     return (
-        <div className="flex h-full w-full flex-col flex-wrap items-center justify-center gap-2 px-3 py-3 xs:gap-3 sm:flex-row sm:gap-4 md:gap-6">
-            <span className="shrink-0 text-center text-xs font-medium text-white/90 xs:text-sm sm:text-base">
-                Partneři klubu:
+        <div className="flex w-full items-center justify-center gap-4 py-1 sm:gap-6 md:gap-8">
+            <span className="text-xs font-medium uppercase tracking-wider text-white/40 sm:text-sm">
+                Partneři
             </span>
-            <div className="flex max-w-full flex-wrap items-center justify-center gap-3 xs:gap-4 sm:gap-5 md:gap-6">
+            <div className="flex items-center gap-5 sm:gap-6 md:gap-8">
                 {SPONSORS.map((sponsor, index) => (
-                    <div
+                    <img
                         key={sponsor.name}
-                        className={`shrink-0 transition-all duration-500 ${
-                            index === activeIndex
-                                ? "scale-105 opacity-100"
-                                : "scale-100 opacity-30"
-                        }`}
-                    >
-                        <img
-                            src={sponsor.logo}
-                            alt={sponsor.name}
-                            className="h-7 w-auto max-w-[5rem] object-contain xs:h-8 sm:h-10 md:h-12"
-                        />
-                    </div>
+                        src={sponsor.logo}
+                        alt={sponsor.name}
+                        className={cn(
+                            "scoreboard-tv-sponsor-logo transition-opacity duration-500",
+                            index === activeIndex ? "opacity-100" : "opacity-35"
+                        )}
+                    />
                 ))}
             </div>
         </div>
